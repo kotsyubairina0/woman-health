@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="title">Men's Health Questionnaire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf9f7; --card: #ffffff; --border: #e8e2d9; --text: #1a1714;
+      --muted: #8a8278; --primary: #7c5c3e; --primary-light: #f5ede4;
+      --accent: #c4956a; --error: #c0392b; --radius: 14px;
+      --shadow: 0 2px 16px rgba(0,0,0,0.06);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(250,249,247,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+    .logo-icon { width: 38px; height: 38px; background: var(--primary-light); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .logo-icon svg { color: var(--primary); }
+    .logo-name { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; }
+    .lang-switcher { display: flex; background: var(--border); border-radius: 9px; padding: 3px; gap: 2px; }
+    .lang-btn { border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500; padding: 5px 13px; border-radius: 7px; transition: all 0.2s; }
+    .lang-btn.active { background: var(--primary); color: #fff; }
+    .lang-btn:not(.active) { background: transparent; color: var(--muted); }
+    main { flex: 1; max-width: 680px; width: 100%; margin: 0 auto; padding: 48px 20px 64px; }
+    h1 { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 600; text-align: center; margin-bottom: 8px; color: var(--text); }
+    .subtitle { text-align: center; color: var(--muted); font-size: 0.9rem; margin-bottom: 40px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeUp 0.4s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .card-title { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 600; color: var(--text); margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+    .field { margin-bottom: 20px; }
+    .field-label { font-size: 0.875rem; font-weight: 500; color: var(--text); margin-bottom: 10px; }
+    .req { color: var(--error); margin-left: 1px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    @media (max-width: 520px) { .grid-3 { grid-template-columns: 1fr; } }
+    input[type="text"], input[type="number"], input[type="tel"], textarea { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.875rem; color: var(--text); background: var(--bg); transition: border-color 0.2s, box-shadow 0.2s; outline: none; }
+    input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(196,149,106,0.12); }
+    textarea { resize: vertical; min-height: 90px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { display: inline-flex; align-items: center; padding: 7px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 500; cursor: pointer; border: 1.5px solid var(--border); background: var(--bg); color: var(--text); transition: all 0.15s; user-select: none; }
+    .chip input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .chip.selected { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .consent-box { background: var(--primary-light); border: 1px solid #e2d0bc; border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+    .consent-label { display: flex; align-items: flex-start; gap: 13px; cursor: pointer; }
+    .custom-check { width: 22px; height: 22px; flex-shrink: 0; border: 2px solid var(--accent); border-radius: 7px; background: #fff; display: flex; align-items: center; justify-content: center; transition: all 0.15s; margin-top: 1px; }
+    .consent-label input { display: none; }
+    .consent-label input:checked + .custom-check { background: var(--primary); border-color: var(--primary); }
+    .consent-label input:checked + .custom-check::after { content: ''; width: 10px; height: 6px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translateY(-1px); display: block; }
+    .consent-text { font-size: 0.85rem; line-height: 1.5; color: var(--muted); }
+    .consent-text strong { color: var(--text); font-size: 0.9rem; display: block; margin-bottom: 4px; }
+    .contact-grid { display: grid; gap: 14px; }
+    .contact-row label { font-size: 0.82rem; font-weight: 500; color: var(--muted); display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+    .actions { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 22px; border-radius: 11px; font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; }
+    .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--muted); width: 100%; }
+    .btn-outline:hover { border-color: var(--accent); color: var(--text); }
+    .btn-primary { width: 100%; background: var(--primary); color: #fff; padding: 15px; font-size: 1rem; border-radius: 13px; }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+    footer { border-top: 1px solid var(--border); background: var(--card); padding: 18px 24px; }
+    .footer-inner { max-width: 680px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; color: var(--muted); }
+    .section-sep { height: 1px; background: var(--border); margin: 22px 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">
+    <div class="logo-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+    </div>
+    <span class="logo-name" data-i18n="logo">Health Questionnaire</span>
+  </a>
+  <div class="lang-switcher">
+    <button class="lang-btn" onclick="setLang('uk')">UK</button>
+    <button class="lang-btn" onclick="setLang('ru')">RU</button>
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+  </div>
+</header>
+
+<main>
+  <h1 data-i18n="title">Men's Health Questionnaire</h1>
+  <p class="subtitle"><span data-i18n="subtitle">Please fill in all required fields marked with</span> <span style="color:var(--error)">*</span></p>
+
+  <div id="successMessage" class="card" style="display: none; text-align: center; padding: 40px 20px;">
+    <h2 data-i18n="success_title" style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 12px;">Thank you!</h2>
+    <p data-i18n="success_desc" style="color: var(--muted);">Your questionnaire has been successfully submitted.</p>
+  </div>
+
+  <form id="healthForm" action="https://api.web3forms.com/submit" method="POST" novalidate>
+    <input type="hidden" name="access_key" value="147772c3-06fc-43aa-983b-4385b2ba3d15">
+    <input type="hidden" name="subject" value="New Men's Health Questionnaire Submission">
+
+    <div class="card">
+      <div class="card-title"><span data-i18n="sec_general">General Information</span></div>
+      <div class="grid-3">
+        <div class="field"><label class="field-label"><span data-i18n="lbl_name">Name</span><span class="req">*</span></label><input type="text" name="first_name" required></div>
+        <div class="field"><label class="field-label"><span data-i18n="lbl_lastname">Last Name</span><span class="req">*</span></label><input type="text" name="last_name" required></div>
+        <div class="field"><label class="field-label"><span data-i18n="lbl_age">Age</span><span class="req">*</span></label><input type="number" name="age" required></div>
+        <div class="field"><label class="field-label"><span data-i18n="lbl_height">Height (cm)</span><span class="req">*</span></label><input type="number" name="height" required></div>
+        <div class="field"><label class="field-label"><span data-i18n="lbl_weight">Weight (kg)</span><span class="req">*</span></label><input type="number" name="weight" required></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span data-i18n="sec_weight">Weight & Water Intake</span></div>
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_weight_sat">Are you satisfied with your weight?</span><span class="req">*</span></div>
+        <div class="chips" data-name="weight_satisfaction" data-type="radio">
+          <label class="chip"><input type="radio" name="weight_satisfaction" value="yes"><span data-i18n="val_yes">Yes</span></label>
+          <label class="chip"><input type="radio" name="weight_satisfaction" value="no"><span data-i18n="val_no">No</span></label>
+        </div>
+      </div>
+      <div class="section-sep"></div>
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_water">How many liters of pure water do you drink per day?</span><span class="req">*</span></div>
+        <div class="chips" data-name="water_intake" data-type="radio">
+          <label class="chip"><input type="radio" name="water_intake" value="less_1"><span data-i18n="val_water_less1">Less than 1 L</span></label>
+          <label class="chip"><input type="radio" name="water_intake" value="1"><span data-i18n="val_water_1">1 L</span></label>
+          <label class="chip"><input type="radio" name="water_intake" value="1.5"><span data-i18n="val_water_1_5">1.5 L</span></label>
+          <label class="chip"><input type="radio" name="water_intake" value="2"><span data-i18n="val_water_2">2 L</span></label>
+          <label class="chip"><input type="radio" name="water_intake" value="2.5"><span data-i18n="val_water_2_5">2.5 L</span></label>
+          <label class="chip"><input type="radio" name="water_intake" value="3"><span data-i18n="val_water_3">3 L</span></label>
+          <label class="chip"><input type="radio" name="water_intake" value="3.5"><span data-i18n="val_water_3_5">3.5 L</span></label>
+          <label class="chip"><input type="radio" name="water_intake" value="4_plus"><span data-i18n="val_water_4">4 L and more</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span data-i18n="sec_health">Health & Systems Indicators</span></div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_covid">COVID-19 / Vaccination</span><span class="req">*</span></div>
+        <div class="chips" data-name="covid_had" data-type="radio">
+          <label class="chip"><input type="radio" name="covid_had" value="yes"><span data-i18n="val_covid_had_yes">Had COVID: Yes</span></label>
+          <label class="chip"><input type="radio" name="covid_had" value="no"><span data-i18n="val_covid_had_no">Had COVID: No</span></label>
+        </div>
+        <div style="margin-top:6px;" class="chips" data-name="covid_vaccinated" data-type="radio">
+          <label class="chip"><input type="radio" name="covid_vaccinated" value="yes"><span data-i18n="val_covid_vac_yes">Vaccinated: Yes</span></label>
+          <label class="chip"><input type="radio" name="covid_vaccinated" value="no"><span data-i18n="val_covid_vac_no">Vaccinated: No</span></label>
+        </div>
+      </div>
+      <div class="section-sep"></div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_hair">Hair condition</span><span class="req">*</span></div>
+        <div class="chips" data-name="hair" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="hair" value="all_good"><span data-i18n="val_all_good">All good</span></label>
+          <label class="chip"><input type="checkbox" name="hair" value="severe_loss"><span data-i18n="val_hair_loss">Severe hair loss</span></label>
+          <label class="chip"><input type="checkbox" name="hair" value="dryness"><span data-i18n="val_dryness">Dryness</span></label>
+          <label class="chip"><input type="checkbox" name="hair" value="oiliness"><span data-i18n="val_oiliness">Oiliness</span></label>
+          <label class="chip"><input type="checkbox" name="hair" value="brittleness"><span data-i18n="val_brittleness">Brittleness</span></label>
+          <label class="chip"><input type="checkbox" name="hair" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_teeth">Teeth condition</span><span class="req">*</span></div>
+        <div class="chips" data-name="teeth" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="teeth" value="all_good"><span data-i18n="val_all_good">All good</span></label>
+          <label class="chip"><input type="checkbox" name="teeth" value="decay"><span data-i18n="val_teeth_decay">Teeth decay or crumble quickly</span></label>
+          <label class="chip"><input type="checkbox" name="teeth" value="bad_breath"><span data-i18n="val_bad_breath">Bad breath</span></label>
+          <label class="chip"><input type="checkbox" name="teeth" value="bleeding"><span data-i18n="val_bleeding_gums">Bleeding gums</span></label>
+          <label class="chip"><input type="checkbox" name="teeth" value="sensitivity"><span data-i18n="val_tooth_sensitivity">Tooth sensitivity</span></label>
+          <label class="chip"><input type="checkbox" name="teeth" value="inflammation"><span data-i18n="val_gum_inflammation">Gum inflammation</span></label>
+          <label class="chip"><input type="checkbox" name="teeth" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+      <div class="section-sep"></div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_digestion">Digestion (Check what applies)</span><span class="req">*</span></div>
+        <div class="chips" data-name="digestion" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="digestion" value="no_issues"><span data-i18n="val_no_issues">No issues</span></label>
+          <label class="chip"><input type="checkbox" name="digestion" value="heartburn"><span data-i18n="val_heartburn">Heartburn</span></label>
+          <label class="chip"><input type="checkbox" name="digestion" value="bitterness"><span data-i18n="val_bitterness">Bitterness in mouth</span></label>
+          <label class="chip"><input type="checkbox" name="digestion" value="bloating"><span data-i18n="val_bloating">Bloating</span></label>
+          <label class="chip"><input type="checkbox" name="digestion" value="heaviness"><span data-i18n="val_heaviness">Heaviness after eating</span></label>
+          <label class="chip"><input type="checkbox" name="digestion" value="gas"><span data-i18n="val_gas">Gas</span></label>
+          <label class="chip"><input type="checkbox" name="digestion" value="diarrhea"><span data-i18n="val_diarrhea">Diarrhea</span></label>
+          <label class="chip"><input type="checkbox" name="digestion" value="constipation"><span data-i18n="val_constipation">Constipation</span></label>
+          <label class="chip"><input type="checkbox" name="digestion" value="pancreatitis"><span data-i18n="val_pancreatitis">Pancreatitis</span></label>
+          <label class="chip"><input type="checkbox" name="digestion" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_gallbladder">Gallbladder and Kidneys</span><span class="req">*</span></div>
+        <div class="chips" data-name="gallbladder_kidneys" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="gallbladder_kidneys" value="all_good"><span data-i18n="val_all_good">All good</span></label>
+          <label class="chip"><input type="checkbox" name="gallbladder_kidneys" value="gb_sand"><span data-i18n="val_gb_sand">Sand in gallbladder</span></label>
+          <label class="chip"><input type="checkbox" name="gallbladder_kidneys" value="gb_stones"><span data-i18n="val_gb_stones">Gallbladder stones</span></label>
+          <label class="chip"><input type="checkbox" name="gallbladder_kidneys" value="kd_sand"><span data-i18n="val_kd_sand">Sand in kidneys</span></label>
+          <label class="chip"><input type="checkbox" name="gallbladder_kidneys" value="kd_stones"><span data-i18n="val_kd_stones">Kidney stones</span></label>
+          <label class="chip"><input type="checkbox" name="gallbladder_kidneys" value="gb_removed"><span data-i18n="val_gb_removed">Gallbladder removed</span></label>
+          <label class="chip"><input type="checkbox" name="gallbladder_kidneys" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+      <div class="section-sep"></div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_operations">Operations and Injuries</span><span class="req">*</span></div>
+        <div class="chips" data-name="operations" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="operations" value="none"><span data-i18n="val_ops_none">No operations or injuries</span></label>
+          <label class="chip"><input type="checkbox" name="operations" value="had_operations"><span data-i18n="val_had_ops">Had operations</span></label>
+          <label class="chip"><input type="checkbox" name="operations" value="organs_removed"><span data-i18n="val_organs_removed">Organs removed</span></label>
+          <label class="chip"><input type="checkbox" name="operations" value="serious_injuries"><span data-i18n="val_serious_injuries">Had serious injuries</span></label>
+          <label class="chip"><input type="checkbox" name="operations" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_pressure">Blood pressure</span><span class="req">*</span></div>
+        <div class="chips" data-name="pressure" data-type="radio">
+          <label class="chip"><input type="radio" name="pressure" value="low"><span data-i18n="val_pressure_low">Low</span></label>
+          <label class="chip"><input type="radio" name="pressure" value="high"><span data-i18n="val_pressure_high">High</span></label>
+          <label class="chip"><input type="radio" name="pressure" value="normal"><span data-i18n="val_pressure_normal">Normal</span></label>
+          <label class="chip"><input type="radio" name="pressure" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span data-i18n="sec_chronic_title">Chronic Diseases & Diagnostics</span></div>
+      
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_chronic">Chronic and Autoimmune Diseases</span><span class="req">*</span></div>
+        <div class="chips" data-name="chronic" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="chronic" value="no"><span data-i18n="val_no">No</span></label>
+          <label class="chip"><input type="checkbox" name="chronic" value="diabetes"><span data-i18n="val_diabetes">Diabetes</span></label>
+          <label class="chip"><input type="checkbox" name="chronic" value="thyroiditis"><span data-i18n="val_thyroiditis">Autoimmune thyroiditis</span></label>
+          <label class="chip"><input type="checkbox" name="chronic" value="psoriasis"><span data-i18n="val_psoriasis">Psoriasis</span></label>
+          <label class="chip"><input type="checkbox" name="chronic" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_nervous">Nervous System</span><span class="req">*</span></div>
+        <div class="chips" data-name="nervous" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="nervous" value="no_issues"><span data-i18n="val_no_issues">No issues</span></label>
+          <label class="chip"><input type="checkbox" name="nervous" value="headaches"><span data-i18n="val_headaches">Headaches</span></label>
+          <label class="chip"><input type="checkbox" name="nervous" value="migraines"><span data-i18n="val_migraines">Migraines</span></label>
+          <label class="chip"><input type="checkbox" name="nervous" value="weather_dependency"><span data-i18n="val_weather_dep">Weather dependency</span></label>
+          <label class="chip"><input type="checkbox" name="nervous" value="dizziness"><span data-i18n="val_dizziness">Dizziness</span></label>
+          <label class="chip"><input type="checkbox" name="nervous" value="tinnitus"><span data-i18n="val_tinnitus">Tinnitus</span></label>
+          <label class="chip"><input type="checkbox" name="nervous" value="floaters"><span data-i18n="val_floaters">Floaters before eyes</span></label>
+          <label class="chip"><input type="checkbox" name="nervous" value="concussion"><span data-i18n="val_concussion">Had concussions or head trauma</span></label>
+          <label class="chip"><input type="checkbox" name="nervous" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_circulation">Circulation</span><span class="req">*</span></div>
+        <div class="chips" data-name="circulation" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="circulation" value="all_good"><span data-i18n="val_all_good">All good</span></label>
+          <label class="chip"><input type="checkbox" name="circulation" value="numbness"><span data-i18n="val_numbness">Numbness of fingers or toes</span></label>
+          <label class="chip"><input type="checkbox" name="circulation" value="cold_limbs"><span data-i18n="val_cold_limbs">Cold hands and feet even in summer</span></label>
+          <label class="chip"><input type="checkbox" name="circulation" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_vessels">Vessel condition</span><span class="req">*</span></div>
+        <div class="chips" data-name="vessels" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="vessels" value="all_good"><span data-i18n="val_all_good">All good</span></label>
+          <label class="chip"><input type="checkbox" name="vessels" value="spider_veins"><span data-i18n="val_spider_veins">Spider veins / vascular network</span></label>
+          <label class="chip"><input type="checkbox" name="vessels" value="varicose"><span data-i18n="val_varicose">Severe varicose veins</span></label>
+          <label class="chip"><input type="checkbox" name="vessels" value="hemorrhoids"><span data-i18n="val_hemorrhoids">Hemorrhoids</span></label>
+          <label class="chip"><input type="checkbox" name="vessels" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_skin_cond">Skin condition</span><span class="req">*</span></div>
+        <div class="chips" data-name="skin_condition" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="skin_condition" value="all_good"><span data-i18n="val_all_good">All good</span></label>
+          <label class="chip"><input type="checkbox" name="skin_condition" value="pigment_spots"><span data-i18n="val_pigment_spots">Pigment spots</span></label>
+          <label class="chip"><input type="checkbox" name="skin_condition" value="acne"><span data-i18n="val_acne">Acne / rashes</span></label>
+          <label class="chip"><input type="checkbox" name="skin_condition" value="dryness"><span data-i18n="val_skin_dryness">Dryness / peeling</span></label>
+          <label class="chip"><input type="checkbox" name="skin_condition" value="eczema"><span data-i18n="val_eczema">Eczema / dermatitis</span></label>
+          <label class="chip"><input type="checkbox" name="skin_condition" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_joints">Joints and Spine</span><span class="req">*</span></div>
+        <div class="chips" data-name="joints" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="joints" value="all_good"><span data-i18n="val_all_good">All good</span></label>
+          <label class="chip"><input type="checkbox" name="joints" value="crunch"><span data-i18n="val_crunch">Joint crunching / squeaking</span></label>
+          <label class="chip"><input type="checkbox" name="joints" value="inflammation"><span data-i18n="val_joints_inflam">Joint inflammation</span></label>
+          <label class="chip"><input type="checkbox" name="joints" value="arthrosis"><span data-i18n="val_arthrosis">Arthrosis</span></label>
+          <label class="chip"><input type="checkbox" name="joints" value="back_pain"><span data-i18n="val_back_pain">Back / lower back pain</span></label>
+          <label class="chip"><input type="checkbox" name="joints" value="neck_pain"><span data-i18n="val_neck_pain">Neck pain</span></label>
+          <label class="chip"><input type="checkbox" name="joints" value="knee_pain"><span data-i18n="val_knee_pain">Knee pain</span></label>
+          <label class="chip"><input type="checkbox" name="joints" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_formations">Formations</span><span class="req">*</span></div>
+        <div class="chips" data-name="formations" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="formations" value="no"><span data-i18n="val_no">No</span></label>
+          <label class="chip"><input type="checkbox" name="formations" value="cysts"><span data-i18n="val_cysts">Cysts</span></label>
+          <label class="chip"><input type="checkbox" name="formations" value="polyps"><span data-i18n="val_polyps">Polyps</span></label>
+          <label class="chip"><input type="checkbox" name="formations" value="fibroids"><span data-i18n="val_fibroids">Fibroids</span></label>
+          <label class="chip"><input type="checkbox" name="formations" value="tumors"><span data-i18n="val_tumors">Tumors</span></label>
+          <label class="chip"><input type="checkbox" name="formations" value="hernias"><span data-i18n="val_hernias">Hernias</span></label>
+          <label class="chip"><input type="checkbox" name="formations" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_infections">Infections and Discharge</span><span class="req">*</span></div>
+        <div class="chips" data-name="infections" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="infections" value="all_good"><span data-i18n="val_all_good">All good</span></label>
+          <label class="chip"><input type="checkbox" name="infections" value="herpes"><span data-i18n="val_herpes">Herpes</span></label>
+          <label class="chip"><input type="checkbox" name="infections" value="papillomas"><span data-i18n="val_papillomas">Papillomas</span></label>
+          <label class="chip"><input type="checkbox" name="infections" value="warts"><span data-i18n="val_warts">Warts</span></label>
+          <label class="chip"><input type="checkbox" name="infections" value="moles"><span data-i18n="val_moles">Moles</span></label>
+          <label class="chip"><input type="checkbox" name="infections" value="red_spots"><span data-i18n="val_red_spots">Red spots on skin</span></label>
+          <label class="chip"><input type="checkbox" name="infections" value="discharge"><span data-i18n="val_discharge_male">Discharge (male)</span></label>
+          <label class="chip"><input type="checkbox" name="infections" value="cystitis"><span data-i18n="val_cystitis">Cystitis</span></label>
+          <label class="chip"><input type="checkbox" name="infections" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_prostatitis">Is there prostatitis or problems with urination</span><span class="req">*</span></div>
+        <div class="chips" data-name="prostatitis" data-type="radio">
+          <label class="chip"><input type="radio" name="prostatitis" value="yes"><span data-i18n="val_yes">Yes</span></label>
+          <label class="chip"><input type="radio" name="prostatitis" value="no"><span data-i18n="val_no">No</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_skin_diseases">Skin (Check what applies)</span><span class="req">*</span></div>
+        <div class="chips" data-name="skin_diseases" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="skin_diseases" value="all_good"><span data-i18n="val_all_good">All good</span></label>
+          <label class="chip"><input type="checkbox" name="skin_diseases" value="acne"><span data-i18n="val_skin_acne">Acne</span></label>
+          <label class="chip"><input type="checkbox" name="skin_diseases" value="severe_acne"><span data-i18n="val_skin_severe_acne">Severe acne</span></label>
+          <label class="chip"><input type="checkbox" name="skin_diseases" value="furuncles"><span data-i18n="val_furuncles">Furuncles</span></label>
+          <label class="chip"><input type="checkbox" name="skin_diseases" value="irritation"><span data-i18n="val_irritation">Irritation</span></label>
+          <label class="chip"><input type="checkbox" name="skin_diseases" value="rosacea"><span data-i18n="val_rosacea">Rosacea</span></label>
+          <label class="chip"><input type="checkbox" name="skin_diseases" value="dermatitis"><span data-i18n="val_dermatitis">Dermatitis</span></label>
+          <label class="chip"><input type="checkbox" name="skin_diseases" value="eczema"><span data-i18n="val_skin_eczema">Eczema</span></label>
+          <label class="chip"><input type="checkbox" name="skin_diseases" value="psoriasis"><span data-i18n="val_skin_psoriasis">Psoriasis</span></label>
+          <label class="chip"><input type="checkbox" name="skin_diseases" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_allergies">Allergies</span><span class="req">*</span></div>
+        <div class="chips" data-name="allergies" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="allergies" value="no"><span data-i18n="val_no">No</span></label>
+          <label class="chip"><input type="checkbox" name="allergies" value="pollen"><span data-i18n="val_pollen">Pollen</span></label>
+          <label class="chip"><input type="checkbox" name="allergies" value="food"><span data-i18n="val_food">Food</span></label>
+          <label class="chip"><input type="checkbox" name="allergies" value="animal"><span data-i18n="val_animal_hair">Animal hair</span></label>
+          <label class="chip"><input type="checkbox" name="allergies" value="dust"><span data-i18n="val_dust">Dust</span></label>
+          <label class="chip"><input type="checkbox" name="allergies" value="medications"><span data-i18n="val_medications">Medications</span></label>
+          <label class="chip"><input type="checkbox" name="allergies" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span data-i18n="sec_lifestyle_title">Lifestyle, Habits & Well-being</span></div>
+      
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_colds_freq">How often do you get sick per year</span><span class="req">*</span></div>
+        <div class="chips" data-name="colds_frequency" data-type="radio">
+          <label class="chip"><input type="radio" name="colds_frequency" value="rarely"><span data-i18n="val_rarely">Rarely (0–1 times)</span></label>
+          <label class="chip"><input type="radio" name="colds_frequency" value="sometimes"><span data-i18n="val_sometimes">Sometimes (2–3 times)</span></label>
+          <label class="chip"><input type="radio" name="colds_frequency" value="often"><span data-i18n="val_often">Often (4+ times)</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_antibiotics">Do you use antibiotics or antipyretics</span><span class="req">*</span></div>
+        <div class="chips" data-name="antibiotics_usage" data-type="radio">
+          <label class="chip"><input type="radio" name="antibiotics_usage" value="no"><span data-i18n="val_no">No</span></label>
+          <label class="chip"><input type="radio" name="antibiotics_usage" value="rarely"><span data-i18n="val_rarely">Rarely</span></label>
+          <label class="chip"><input type="radio" name="antibiotics_usage" value="sometimes"><span data-i18n="val_sometimes">Sometimes</span></label>
+          <label class="chip"><input type="radio" name="antibiotics_usage" value="often"><span data-i18n="val_often">Often</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_sleep">Sleep (Check what applies)</span><span class="req">*</span></div>
+        <div class="chips" data-name="sleep_quality" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="sleep_quality" value="good"><span data-i18n="val_sleep_good">Good</span></label>
+          <label class="chip"><input type="checkbox" name="sleep_quality" value="hard_fall_asleep"><span data-i18n="val_hard_fall_asleep">Hard to fall asleep</span></label>
+          <label class="chip"><input type="checkbox" name="sleep_quality" value="frequent_waking"><span data-i18n="val_frequent_waking">Frequent waking</span></label>
+          <label class="chip"><input type="checkbox" name="sleep_quality" value="light_sleep"><span data-i18n="val_light_sleep">Light sleep</span></label>
+          <label class="chip"><input type="checkbox" name="sleep_quality" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_energy">Energy (Check what applies)</span><span class="req">*</span></div>
+        <div class="chips" data-name="energy_level" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="energy_level" value="no_issues"><span data-i18n="val_no_issues">No issues</span></label>
+          <label class="chip"><input type="checkbox" name="energy_level" value="hard_wake_up"><span data-i18n="val_hard_wake_up">Hard to wake up</span></label>
+          <label class="chip"><input type="checkbox" name="energy_level" value="no_energy"><span data-i18n="val_no_energy">No energy</span></label>
+          <label class="chip"><input type="checkbox" name="energy_level" value="need_coffee"><span data-i18n="val_need_coffee">Need coffee</span></label>
+          <label class="chip"><input type="checkbox" name="energy_level" value="feel_rested"><span data-i18n="val_feel_rested">Feel rested</span></label>
+          <label class="chip"><input type="checkbox" name="energy_level" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_memory">Memory and Concentration</span><span class="req">*</span></div>
+        <div class="chips" data-name="memory_focus" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="memory_focus" value="no_issues"><span data-i18n="val_no_issues">No issues</span></label>
+          <label class="chip"><input type="checkbox" name="memory_focus" value="memory_decline"><span data-i18n="val_memory_decline">Memory decline</span></label>
+          <label class="chip"><input type="checkbox" name="memory_focus" value="concentration_difficulties"><span data-i18n="val_concentration_diff">Concentration difficulties</span></label>
+          <label class="chip"><input type="checkbox" name="memory_focus" value="forgetfulness"><span data-i18n="val_forgetfulness">Forgetfulness</span></label>
+          <label class="chip"><input type="checkbox" name="memory_focus" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_lifestyle">Lifestyle (Check what applies)</span><span class="req">*</span></div>
+        <div class="chips" data-name="lifestyle" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="lifestyle" value="sedentary"><span data-i18n="val_sedentary">Sedentary</span></label>
+          <label class="chip"><input type="checkbox" name="lifestyle" value="regular_sport"><span data-i18n="val_regular_sport">Regular sport</span></label>
+          <label class="chip"><input type="checkbox" name="lifestyle" value="home_gymnastics"><span data-i18n="val_home_gymnastics">Home gymnastics</span></label>
+          <label class="chip"><input type="checkbox" name="lifestyle" value="hardening"><span data-i18n="val_hardening">Hardening</span></label>
+          <label class="chip"><input type="checkbox" name="lifestyle" value="high_stress"><span data-i18n="val_high_stress">High stress level</span></label>
+          <label class="chip"><input type="checkbox" name="lifestyle" value="heavy_work"><span data-i18n="val_heavy_work">Physically heavy work</span></label>
+          <label class="chip"><input type="checkbox" name="lifestyle" value="toxic_contact"><span data-i18n="val_toxic_contact">Contact with toxic substances</span></label>
+          <label class="chip"><input type="checkbox" name="lifestyle" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label"><span data-i18n="lbl_toxic_det">Contact with toxic substances (specify)</span><span class="req">*</span></label>
+        <input type="text" name="toxic_substances_details" required>
+      </div>
+
+      <div class="field">
+        <label class="field-label"><span data-i18n="lbl_meds_det">Do you take medications on a regular basis (specify)</span><span class="req">*</span></label>
+        <input type="text" name="medications_details" required>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_supplements">Supplements: How do you take them?</span><span class="req">*</span></div>
+        <div class="chips" data-name="supplements" data-type="radio">
+          <label class="chip"><input type="radio" name="supplements" value="regularly"><span data-i18n="val_regularly">Take regularly</span></label>
+          <label class="chip"><input type="radio" name="supplements" value="periodically"><span data-i18n="val_periodically">Periodically</span></label>
+          <label class="chip"><input type="radio" name="supplements" value="not_taking"><span data-i18n="val_not_taking">Not taking</span></label>
+          <label class="chip"><input type="radio" name="supplements" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_tests">Do you have blood test results from the last 2–3 months or did you have ultrasound</span><span class="req">*</span></div>
+        <div class="chips" data-name="recent_tests" data-type="radio">
+          <label class="chip"><input type="radio" name="recent_tests" value="yes"><span data-i18n="val_yes">Yes</span></label>
+          <label class="chip"><input type="radio" name="recent_tests" value="no"><span data-i18n="val_no">No</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span data-i18n="sec_additional_title">Additional Info & Source</span></div>
+      <div class="field">
+        <label class="field-label"><span data-i18n="lbl_add_info">What else would you like to add about your health</span><span class="req">*</span></label>
+        <textarea name="additional_info" required></textarea>
+      </div>
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_how_learned">How did you learn about me?</span><span class="req">*</span></div>
+        <div class="chips" data-name="how_learned" data-type="radio">
+          <label class="chip"><input type="radio" name="how_learned" value="instagram"><span data-i18n="val_insta">Instagram</span></label>
+          <label class="chip"><input type="radio" name="how_learned" value="telegram_channel"><span data-i18n="val_tg">Telegram channel</span></label>
+          <label class="chip"><input type="radio" name="how_learned" value="recommendation"><span data-i18n="val_recommend">By recommendation</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span data-i18n="sec_contact_title">Contact Method</span></div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;" data-i18n="lbl_contact_desc">Please provide at least one: Telegram, Instagram, or Phone</p>
+      <div class="contact-grid">
+        <div class="contact-row"><label>Telegram</label><input type="text" name="telegram"></div>
+        <div class="contact-row"><label>Instagram</label><input type="text" name="instagram"></div>
+        <div class="contact-row"><label>Phone <span style="font-weight:300;color:var(--muted)" data-i18n="val_opt">(optional)</span></label><input type="tel" name="phone"></div>
+      </div>
+    </div>
+
+    <div class="consent-box">
+      <label class="consent-label">
+        <input type="checkbox" id="consent" name="consent" required>
+        <div class="custom-check"></div>
+        <div class="consent-text">
+          <strong data-i18n="lbl_consent_title">Consent to data processing</strong>
+          <span data-i18n="lbl_consent_text">I consent to the processing of my personal data.</span>
+        </div>
+      </label>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn btn-outline" onclick="clearForm()"><span data-i18n="btn_clear">Clear form</span></button>
+      <button type="submit" class="btn btn-primary" id="submitBtn" disabled><span data-i18n="btn_submit">Submit questionnaire</span></button>
+    </div>
+  </form>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Health Questionnaire</span>
+  </div>
+</footer>
+
+<script>
+  const translations = {
+    en: {
+      logo: "Health Questionnaire", title: "Men's Health Questionnaire", subtitle: "Please fill in all required fields marked with",
+      success_title: "Thank you!", success_desc: "Your questionnaire has been successfully submitted.",
+      sec_general: "General Information", lbl_name: "Name", lbl_lastname: "Last Name", lbl_age: "Age", lbl_height: "Height (cm)", lbl_weight: "Weight (kg)",
+      sec_weight: "Weight & Water Intake", lbl_weight_sat: "Are you satisfied with your weight?", val_yes: "Yes", val_no: "No",
+      lbl_water: "How many liters of pure water do you drink per day?", val_water_less1: "Less than 1 L", val_water_1: "1 L", val_water_1_5: "1.5 L", val_water_2: "2 L", val_water_2_5: "2.5 L", val_water_3: "3 L", val_water_3_5: "3.5 L", val_water_4: "4 L and more",
+      sec_health: "Health & Systems Indicators", lbl_covid: "COVID-19 / Vaccination", val_covid_had_yes: "Had COVID: Yes", val_covid_had_no: "Had COVID: No", val_covid_vac_yes: "Vaccinated: Yes", val_covid_vac_no: "Vaccinated: No",
+      lbl_hair: "Hair condition", val_all_good: "All good", val_hair_loss: "Severe hair loss", val_dryness: "Dryness", val_oiliness: "Oiliness", val_brittleness: "Brittleness", val_other: "Other",
+      lbl_teeth: "Teeth condition", val_teeth_decay: "Teeth decay or crumble quickly", val_bad_breath: "Bad breath", val_bleeding_gums: "Bleeding gums", val_tooth_sensitivity: "Tooth sensitivity", val_gum_inflammation: "Gum inflammation",
+      lbl_digestion: "Digestion (Check what applies)", val_no_issues: "No issues", val_heartburn: "Heartburn", val_bitterness: "Bitterness in mouth", val_bloating: "Bloating", val_heaviness: "Heaviness after eating", val_gas: "Gas", val_diarrhea: "Diarrhea", val_constipation: "Constipation", val_pancreatitis: "Pancreatitis",
+      lbl_gallbladder: "Gallbladder and Kidneys", val_gb_sand: "Sand in gallbladder", val_gb_stones: "Gallbladder stones", val_kd_sand: "Sand in kidneys", val_kd_stones: "Kidney stones", val_gb_removed: "Gallbladder removed",
+      lbl_operations: "Operations and Injuries", val_ops_none: "No operations or injuries", val_had_ops: "Had operations", val_organs_removed: "Organs removed", val_serious_injuries: "Had serious injuries",
+      lbl_pressure: "Blood pressure", val_pressure_low: "Low", val_pressure_high: "High", val_pressure_normal: "Normal",
+      sec_chronic_title: "Chronic Diseases & Diagnostics", lbl_chronic: "Chronic and Autoimmune Diseases", val_diabetes: "Diabetes", val_thyroiditis: "Autoimmune thyroiditis", val_psoriasis: "Psoriasis",
+      lbl_nervous: "Nervous System", val_headaches: "Headaches", val_migraines: "Migraines", val_weather_dep: "Weather dependency", val_dizziness: "Dizziness", val_tinnitus: "Tinnitus", val_floaters: "Floaters before eyes", val_concussion: "Had concussions or head trauma",
+      lbl_circulation: "Circulation", val_numbness: "Numbness of fingers or toes", val_cold_limbs: "Cold hands and feet even in summer",
+      lbl_vessels: "Vessel condition", val_spider_veins: "Spider veins / vascular network", val_varicose: "Severe varicose veins", val_hemorrhoids: "Hemorrhoids",
+      lbl_skin_cond: "Skin condition", val_pigment_spots: "Pigment spots", val_acne: "Acne / rashes", val_skin_dryness: "Dryness / peeling", val_eczema: "Eczema / dermatitis",
+      lbl_joints: "Joints and Spine", val_crunch: "Joint crunching / squeaking", val_joints_inflam: "Joint inflammation", val_arthrosis: "Arthrosis", val_back_pain: "Back / lower back pain", val_neck_pain: "Neck pain", val_knee_pain: "Knee pain",
+      lbl_formations: "Formations", val_cysts: "Cysts", val_polyps: "Polyps", val_fibroids: "Fibroids", val_tumors: "Tumors", val_hernias: "Hernias",
+      lbl_infections: "Infections and Discharge", val_herpes: "Herpes", val_papillomas: "Papillomas", val_warts: "Warts", val_moles: "Moles", val_red_spots: "Red spots on skin", val_discharge_male: "Discharge (male)", val_cystitis: "Cystitis",
+      lbl_prostatitis: "Is there prostatitis or problems with urination",
+      lbl_skin_diseases: "Skin (Check what applies)", val_skin_acne: "Acne", val_skin_severe_acne: "Severe acne", val_furuncles: "Furuncles", val_irritation: "Irritation", val_rosacea: "Rosacea", val_dermatitis: "Dermatitis", val_skin_eczema: "Eczema", val_skin_psoriasis: "Psoriasis",
+      lbl_allergies: "Allergies", val_pollen: "Pollen", val_food: "Food", val_animal_hair: "Animal hair", val_dust: "Dust", val_medications: "Medications",
+      sec_lifestyle_title: "Lifestyle, Habits & Well-being", lbl_colds_freq: "How often do you get sick per year", val_rarely: "Rarely (0–1 times)", val_sometimes: "Sometimes (2–3 times)", val_often: "Often (4+ times)",
+      lbl_antibiotics: "Do you use antibiotics or antipyretics", lbl_sleep: "Sleep (Check what applies)", val_sleep_good: "Good", val_hard_fall_asleep: "Hard to fall asleep", val_frequent_waking: "Frequent waking", val_light_sleep: "Light sleep",
+      lbl_energy: "Energy (Check what applies)", val_hard_wake_up: "Hard to wake up", val_no_energy: "No energy", val_need_coffee: "Need coffee", val_feel_rested: "Feel rested",
+      lbl_memory: "Memory and Concentration", val_memory_decline: "Memory decline", val_concentration_diff: "Concentration difficulties", val_forgetfulness: "Forgetfulness",
+      lbl_lifestyle: "Lifestyle (Check what applies)", val_sedentary: "Sedentary", val_regular_sport: "Regular sport", val_home_gymnastics: "Home gymnastics", val_hardening: "Hardening", val_high_stress: "High stress level", val_heavy_work: "Physically heavy work", val_toxic_contact: "Contact with toxic substances",
+      lbl_toxic_det: "Contact with toxic substances (specify)", lbl_meds_det: "Do you take medications on a regular basis (specify)", lbl_supplements: "Supplements: How do you take them?", val_regularly: "Take regularly", val_periodically: "Periodically", val_not_taking: "Not taking",
+      lbl_tests: "Do you have blood test results from the last 2–3 months or did you have ultrasound",
+      sec_additional_title: "Additional Info & Source", lbl_add_info: "What else would you like to add about your health", lbl_how_learned: "How did you learn about me?", val_insta: "Instagram", val_tg: "Telegram channel", val_recommend: "By recommendation",
+      sec_contact_title: "Contact Method", lbl_contact_desc: "Please provide at least one: Telegram, Instagram, or Phone", val_opt: "(optional)",
+      lbl_consent_title: "Consent to data processing", lbl_consent_text: "I consent to the processing of my personal data.",
+      btn_clear: "Clear form", btn_submit: "Submit questionnaire", alert_clear: "Clear all form data?"
+    },
+    uk: {
+      logo: "Анкета здоровʼя", title: "Чоловіче здоров'я", subtitle: "Будь ласка, заповніть усі обов'язкові поля, позначені",
+      success_title: "Дякуємо!", success_desc: "Вашу анкету успішно відправлено.",
+      sec_general: "Загальна інформація", lbl_name: "Ім'я", lbl_lastname: "Прізвище", lbl_age: "Вік", lbl_height: "Зріст (см)", lbl_weight: "Вага (кг)",
+      sec_weight: "Вага та споживання води", lbl_weight_sat: "Чи задоволені ви своєю вагою?", val_yes: "Так", val_no: "Ні",
+      lbl_water: "Скільки літрів чистої води ви п'єте на день?", val_water_less1: "Менше 1 л", val_water_1: "1 л", val_water_1_5: "1.5 л", val_water_2: "2 L", val_water_2_5: "2.5 л", val_water_3: "3 л", val_water_3_5: "3.5 л", val_water_4: "4 л і більше",
+      sec_health: "Показники здоров'я та систем", lbl_covid: "COVID-19 / Вакцинація", val_covid_had_yes: "Хворів на COVID: Так", val_covid_had_no: "Хворів на COVID: Ні", val_covid_vac_yes: "Вакцинований: Так", val_covid_vac_no: "Вакцинований: Ні",
+      lbl_hair: "Стан волосся", val_all_good: "Все добре", val_hair_loss: "Сильне випадіння", val_dryness: "Сухість", val_oiliness: "Жирність", val_brittleness: "Ламкість", val_other: "Інше",
+      lbl_teeth: "Стан зубів", val_teeth_decay: "Зуби швидко псуються або кришаться", val_bad_breath: "Неприємний запах з рота", val_bleeding_gums: "Кровоточивість ясен", val_tooth_sensitivity: "Чутливість зубів", val_gum_inflammation: "Запалення ясен",
+      lbl_digestion: "Травлення (Відмітьте, що підходить)", val_no_issues: "Немає проблем", val_heartburn: "Печія", val_bitterness: "Гіркота в роті", val_bloating: "Здуття", val_heaviness: "Тяжкість після їжі", val_gas: "Гази", val_diarrhea: "Діарея", val_constipation: "Запор", val_pancreatitis: "Панкреатит",
+      lbl_gallbladder: "Жовчний міхур та нирки", val_gb_sand: "Пісок у жовчному", val_gb_stones: "Камені в жовчному", val_kd_sand: "Пісок у нирках", val_kd_stones: "Камені в нирках", val_gb_removed: "Жовчний міхур видалено",
+      lbl_operations: "Операції та травми", val_ops_none: "Не було операцій чи травм", val_had_ops: "Були операції", val_organs_removed: "Видалено органи", val_serious_injuries: "Були серйозні травми",
+      lbl_pressure: "Артеріальний тиск", val_pressure_low: "Знижений", val_pressure_high: "Підвищений", val_pressure_normal: "Нормальний",
+      sec_chronic_title: "Хронічні захворювання та діагностика", lbl_chronic: "Хронічні та аутоімунні захворювання", val_diabetes: "Діабет", val_thyroiditis: "Аутоімунний тиреоїдит", val_psoriasis: "Псоріяз",
+      lbl_nervous: "Нервова система", val_headaches: "Головні болі", val_migraines: "Мігрені", val_weather_dep: "Метеозалежність", val_dizziness: "Запаморочення", val_tinnitus: "Шум у вухах", val_floaters: "Мушки перед очима", val_concussion: "Мав струс мозку чи травми голови",
+      lbl_circulation: "Кровообіг", val_numbness: "Оніміння пальців рук/ніг", val_cold_limbs: "Холодні руки та ноги навіть улітку",
+      lbl_vessels: "Стан судин", val_spider_veins: "Судинні зірочки / сітка", val_varicose: "Виражений варикоз", val_hemorrhoids: "Геморой",
+      lbl_skin_cond: "Стан шкіри", val_pigment_spots: "Пігментні плями", val_acne: "Прищі / висипання", val_skin_dryness: "Сухість / лущення", val_eczema: "Екзема / дерматит",
+      lbl_joints: "Суглоби та хребет", val_crunch: "Хрускіт / скрип суглобів", val_joints_inflam: "Запалення суглобів", val_arthrosis: "Артроз", val_back_pain: "Біль у спині / попереку", val_neck_pain: "Біль у шиї", val_knee_pain: "Біль у колінах",
+      lbl_formations: "Новоутворення", val_cysts: "Кісти", val_polyps: "Поліпи", val_fibroids: "Фіброміоми", val_tumors: "Пухлини", val_hernias: "Грижі",
+      lbl_infections: "Інфекції та виділення", val_herpes: "Герпес", val_papillomas: "Папіломи", val_warts: "Бородавки", val_moles: "Родимки", val_red_spots: "Червоні плями на шкірі", val_discharge_male: "Виділення (чоловічі)", val_cystitis: "Цистит",
+      lbl_prostatitis: "Чи є простатит або проблеми з сечовипусканням",
+      lbl_skin_diseases: "Шкіра (Відмітьте, що підходить)", val_skin_acne: "Вугрі", val_skin_severe_acne: "Тяжкі вугрі", val_furuncles: "Фурункули", val_irritation: "Подразнення", val_rosacea: "Розацеа", val_dermatitis: "Дерматит", val_skin_eczema: "Екзема", val_skin_psoriasis: "Псоріаз",
+      lbl_allergies: "Алергії", val_pollen: "На пилок", val_food: "Харчова", val_animal_hair: "На шерсть", val_dust: "На пил", val_medications: "На медикаменти",
+      sec_lifestyle_title: "Спосіб життя, звички та самопочуття", lbl_colds_freq: "Як часто ви хворієте на рік", val_rarely: "Рідко (0–1 раз)", val_sometimes: "Іноді (2–3 рази)", val_often: "Часто (4+ разів)",
+      lbl_antibiotics: "Чи використовуєте антибіотики чи жарознижувальні", lbl_sleep: "Сон (Відмітьте, що підходить)", val_sleep_good: "Добрий", val_hard_fall_asleep: "Важко заснути", val_frequent_waking: "Часті пробудження", val_light_sleep: "Поверхневий сон",
+      lbl_energy: "Енергія (Відмітьте, що підходить)", val_hard_wake_up: "Важко прокидатися", val_no_energy: "Немає енергії", val_need_coffee: "Потрібна кава", val_feel_rested: "Відчуваю себе відпочилим",
+      lbl_memory: "Пам'ять та концентрація", val_memory_decline: "Погіршення пам'яті", val_concentration_diff: "Труднощі з концентрацією", val_forgetfulness: "Забудькуватість",
+      lbl_lifestyle: "Спосіб життя (Відмітьте, що підходить)", val_sedentary: "Сидячий", val_regular_sport: "Регулярний спорт", val_home_gymnastics: "Домашня гімнастика", val_hardening: "Загартовування", val_high_stress: "Високий рівень стресу", val_heavy_work: "Фізично важка робота", val_toxic_contact: "Контакт із токсичними речовинами",
+      lbl_toxic_det: "Контакт із токсичними речовинами (уточніть)", lbl_meds_det: "Чи приймаєте ліки на регулярній основі (уточніть)", lbl_supplements: "Добавки: Як ви їх приймаєте?", val_regularly: "Приймаю регулярно", val_periodically: "Періодично", val_not_taking: "Не приймаю",
+      lbl_tests: "Чи маєте результати аналізов крові за останні 2–3 місяці або УЗД",
+      sec_additional_title: "Додатково та джерела", lbl_add_info: "Що ще ви хотіли б додати про своє здоров'я", lbl_how_learned: "Звідки ви про мене дізналися?", val_insta: "Instagram", val_tg: "Telegram канал", val_recommend: "За рекомендацією",
+      sec_contact_title: "Спосіб зв'язку", lbl_contact_desc: "Вкажіть хоча б одне: Telegram, Instagram або Телефон", val_opt: "(необов'язково)",
+      lbl_consent_title: "Згода на обробку даних", lbl_consent_text: "Я даю згоду на обробку моїх персональних даних.",
+      btn_clear: "Очистити форму", btn_submit: "Відправити анкету", alert_clear: "Очистити всі дані форми?"
+    },
+    ru: {
+      logo: "Анкета здоровья", title: "Мужское здоровье", subtitle: "Пожалуйста, заполните все обязательные поля, отмеченные",
+      success_title: "Спасибо!", success_desc: "Ваша анкета успешно отправлена.",
+      sec_general: "Общая информация", lbl_name: "Имя", lbl_lastname: "Фамилия", lbl_age: "Возраст", lbl_height: "Рост (см)", lbl_weight: "Вес (кг)",
+      sec_weight: "Вес и потребление воды", lbl_weight_sat: "Довольны ли вы своим весом?", val_yes: "Да", val_no: "Нет",
+      lbl_water: "Сколько литров чистой воды вы пьете в день?", val_water_less1: "Менее 1 л", val_water_1: "1 л", val_water_1_5: "1.5 л", val_water_2: "2 л", val_water_2_5: "2.5 л", val_water_3: "3 л", val_water_3_5: "3.5 л", val_water_4: "4 л и более",
+      sec_health: "Показатели здоровья и систем", lbl_covid: "COVID-19 / Вакцинация", val_covid_had_yes: "Болел COVID: Да", val_covid_had_no: "Болел COVID: Нет", val_covid_vac_yes: "Вакцинирован: Да", val_covid_vac_no: "Вакцинирован: Нет",
+      lbl_hair: "Состояние волос", val_all_good: "Все хорошо", val_hair_loss: "Сильное выпадение", val_dryness: "Сухость", val_oiliness: "Жирность", val_brittleness: "Ломкость", val_other: "Другое",
+      lbl_teeth: "Состояние зубов", val_teeth_decay: "Зубы быстро портятся или крошатся", val_bad_breath: "Неприятный запах изо рта", val_bleeding_gums: "Кровоточивость десен", val_tooth_sensitivity: "Чувствительность зубов", val_gum_inflammation: "Воспаление десен",
+      lbl_digestion: "Пищеварение (Отметьте, что подходит)", val_no_issues: "Нет проблем", val_heartburn: "Изжога", val_bitterness: "Горечь во рту", val_bloating: "Вздутие", val_heaviness: "Тяжесть после еды", val_gas: "Газы", val_diarrhea: "Диарея", val_constipation: "Запор", val_pancreatitis: "Панкреатит",
+      lbl_gallbladder: "Желчный пузырь и почки", val_gb_sand: "Песок в желчном", val_gb_stones: "Камни в желчном", val_kd_sand: "Песок в почках", val_kd_stones: "Камни в почках", val_gb_removed: "Желчный пузырь удален",
+      lbl_operations: "Операции и травмы", val_ops_none: "Не было операций и травм", val_had_ops: "Были операции", val_organs_removed: "Удалены органы", val_serious_injuries: "Были серьезные травмы",
+      lbl_pressure: "Артериальное давление", val_pressure_low: "Пониженное", val_pressure_high: "Повышенное", val_pressure_normal: "Нормальное",
+      sec_chronic_title: "Хронические заболевания и диагностика", lbl_chronic: "Хронические и аутоиммунные заболевания", val_diabetes: "Диабет", val_thyroiditis: "Аутоиммунный тиреоидит", val_psoriasis: "Псориаз",
+      lbl_nervous: "Нервная система", val_headaches: "Головные боли", val_migraines: "Мигрени", val_weather_dep: "Метеозависимость", val_dizziness: "Головокружение", val_tinnitus: "Шум в ушах", val_floaters: "Мушки перед глазами", val_concussion: "Перенес сотрясение или травму головы",
+      lbl_circulation: "Кровообращение", val_numbness: "Онемение пальцев рук/ног", val_cold_limbs: "Холодные руки и ноги даже летом",
+      lbl_vessels: "Состояние сосудов", val_spider_veins: "Сосудистые звездочки / сетка", val_varicose: "Выраженный варикоз", val_hemorrhoids: "Геморрой",
+      lbl_skin_cond: "Состояние кожи", val_pigment_spots: "Пигментные пятна", val_acne: "Прыщи / высыпания", val_skin_dryness: "Сухость / шелушение", val_eczema: "Экзема / дерматит",
+      lbl_joints: "Суставы и позвоночник", val_crunch: "Хруст / скрип суставов", val_joints_inflam: "Воспаление суставов", val_arthrosis: "Артроз", val_back_pain: "Боль в спине / пояснице", val_neck_pain: "Боль в шее", val_knee_pain: "Боль в коленях",
+      lbl_formations: "Новообразования", val_cysts: "Кисты", val_polyps: "Полипы", val_fibroids: "Фибромиомы", val_tumors: "Опухоли", val_hernias: "Грыжи",
+      lbl_infections: "Инфекции и выделения", val_herpes: "Герпес", val_papillomas: "Папилломы", val_warts: "Бородавки", val_moles: "Родинки", val_red_spots: "Красные пятна на коже", val_discharge_male: "Выделения (мужские)", val_cystitis: "Цистит",
+      lbl_prostatitis: "Есть ли простатит или проблемы с мочеиспусканием",
+      lbl_skin_diseases: "Кожа (Отметьте, что подходит)", val_skin_acne: "Угри", val_skin_severe_acne: "Тяжёлые угри", val_furuncles: "Фурункулы", val_irritation: "Раздражение", val_rosacea: "Розацеа", val_dermatitis: "Дерматит", val_skin_eczema: "Экзема", val_skin_psoriasis: "Пsoriaz",
+      lbl_allergies: "Аллергии", val_pollen: "На пыльцу", val_food: "Пищевая", val_animal_hair: "На шерсть", val_dust: "На пыль", val_medications: "На медикаменты",
+      sec_lifestyle_title: "Образ жизни, привычки и самочувствие", lbl_colds_freq: "Как часто вы болеете в год", val_rarely: "Редко (0–1 раз)", val_sometimes: "Иногда (2–3 раза)", val_often: "Часто (4+ раз)",
+      lbl_antibiotics: "Используете ли антибиотики или жаропонижающие", lbl_sleep: "Сон (Отметьте, что подходит)", val_sleep_good: "Хороший", val_hard_fall_asleep: "Трудно заснуть", val_frequent_waking: "Частые пробуждения", val_light_sleep: "Поверхностный сон",
+      lbl_energy: "Энергия (Отметьте, что подходит)", val_hard_wake_up: "Трудно просыпаться", val_no_energy: "Нет энергии", val_need_coffee: "Нужен кофе", val_feel_rested: "Чувствую себя отдохнувшим",
+      lbl_memory: "Память и концентрация", val_memory_decline: "Ухудшение памяти", val_concentration_diff: "Трудности с концентрацией", val_forgetfulness: "Забывчивость",
+      lbl_lifestyle: "Образ жизни (Отметьте, что подходит)", val_sedentary: "Сидячий", val_regular_sport: "Регулярный спорт", val_home_gymnastics: "Домашняя гимнастика", val_hardening: "Закаливание", val_high_stress: "Высокий уровень стресса", val_heavy_work: "Физически тяжелая работа", val_toxic_contact: "Контакт с токсичными веществами",
+      lbl_toxic_det: "Контакт с токсичными веществами (уточните)", lbl_meds_det: "Принимаете ли лекарства на регулярной основе (уточните)", lbl_supplements: "Добавки: Как вы их принимаете?", val_regularly: "Принимаю регулярно", val_periodically: "Периодически", val_not_taking: "Не принимаю",
+      lbl_tests: "Есть ли у вас результаты анализов крови за последние 2–3 месяца или УЗД",
+      sec_additional_title: "Дополнительно и источники", lbl_add_info: "Что еще вы хотели бы добавить о своем здоровье", lbl_how_learned: "Откуда вы обо мне узнали?", val_insta: "Instagram", val_tg: "Telegram канал", val_recommend: "По рекомендации",
+      sec_contact_title: "Способ связи", lbl_contact_desc: "Укажите хотя бы одно: Telegram, Instagram или Телефон", val_opt: "(необязательно)",
+      lbl_consent_title: "Согласие на обработку данных", lbl_consent_text: "Я даю согласие на обработку моих персональных данных.",
+      btn_clear: "Очистить форму", btn_submit: "Отправить анкету", alert_clear: "Очистить все данные формы?"
+    }
+  };
+
+  let currentLang = 'en';
+
+  function setLang(lang) {
+    currentLang = lang;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+    
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[lang] && translations[lang][key]) el.innerHTML = translations[lang][key];
+    });
+  }
+
+  document.querySelectorAll('.chips').forEach(group => {
+    const type = group.dataset.type;
+    group.querySelectorAll('.chip').forEach(chip => {
+      const input = chip.querySelector('input');
+      input.addEventListener('change', () => {
+        if (type === 'radio') {
+          group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+          if (input.checked) chip.classList.add('selected');
+        } else {
+          chip.classList.toggle('selected', input.checked);
+        }
+        checkSubmit();
+      });
+    });
+  });
+
+  const consentCheck = document.getElementById('consent');
+  consentCheck.addEventListener('change', checkSubmit);
+
+  function checkSubmit() {
+    document.getElementById('submitBtn').disabled = !consentCheck.checked;
+  }
+
+  function clearForm() {
+    if (!confirm(translations[currentLang].alert_clear || "Clear?")) return;
+    document.getElementById('healthForm').reset();
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+    checkSubmit();
+  }
+
+  document.getElementById('healthForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const form = this;
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Sending...';
+
+    try {
+      const response = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+      if (response.status === 200) {
+        form.style.display = 'none';
+        document.querySelector('.subtitle').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        alert("Something went wrong!");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Submit';
+      }
+    } catch (error) {
+      alert("Network error.");
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

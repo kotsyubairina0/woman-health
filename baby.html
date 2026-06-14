@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="title">Baby Health Questionnaire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf9f7; --card: #ffffff; --border: #e8e2d9; --text: #1a1714;
+      --muted: #8a8278; --primary: #7c5c3e; --primary-light: #f5ede4;
+      --accent: #c4956a; --error: #c0392b; --radius: 14px;
+      --shadow: 0 2px 16px rgba(0,0,0,0.06);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(250,249,247,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+    .logo-icon { width: 38px; height: 38px; background: var(--primary-light); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .logo-icon svg { color: var(--primary); }
+    .logo-name { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; }
+    .lang-switcher { display: flex; background: var(--border); border-radius: 9px; padding: 3px; gap: 2px; }
+    .lang-btn { border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500; padding: 5px 13px; border-radius: 7px; transition: all 0.2s; }
+    .lang-btn.active { background: var(--primary); color: #fff; }
+    .lang-btn:not(.active) { background: transparent; color: var(--muted); }
+    main { flex: 1; max-width: 680px; width: 100%; margin: 0 auto; padding: 48px 20px 64px; }
+    h1 { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 600; text-align: center; margin-bottom: 8px; color: var(--text); }
+    .subtitle { text-align: center; color: var(--muted); font-size: 0.9rem; margin-bottom: 40px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeUp 0.4s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .card-title { display: flex; align-items: center; gap: 9px; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 600; color: var(--text); margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+    .card-title svg { color: var(--accent); flex-shrink: 0; }
+    .field { margin-bottom: 20px; }
+    .field:last-child { margin-bottom: 0; }
+    .field-label { display: flex; align-items: center; gap: 7px; font-size: 0.875rem; font-weight: 500; color: var(--text); margin-bottom: 10px; }
+    .req { color: var(--error); margin-left: 1px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    @media (max-width: 520px) { .grid-3 { grid-template-columns: 1fr; } }
+    input[type="text"], input[type="number"], input[type="tel"], textarea { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.875rem; color: var(--text); background: var(--bg); transition: border-color 0.2s, box-shadow 0.2s; outline: none; }
+    input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(196,149,106,0.12); }
+    textarea { resize: vertical; min-height: 90px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { display: inline-flex; align-items: center; padding: 7px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 500; cursor: pointer; border: 1.5px solid var(--border); background: var(--bg); color: var(--text); transition: all 0.15s; user-select: none; }
+    .chip input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .chip.selected { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .consent-box { background: var(--primary-light); border: 1px solid #e2d0bc; border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+    .consent-label { display: flex; align-items: flex-start; gap: 13px; cursor: pointer; }
+    .custom-check { width: 22px; height: 22px; flex-shrink: 0; border: 2px solid var(--accent); border-radius: 7px; background: #fff; display: flex; align-items: center; justify-content: center; transition: all 0.15s; margin-top: 1px; }
+    .consent-label input { display: none; }
+    .consent-label input:checked + .custom-check { background: var(--primary); border-color: var(--primary); }
+    .consent-label input:checked + .custom-check::after { content: ''; width: 10px; height: 6px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translateY(-1px); display: block; }
+    .consent-text { font-size: 0.85rem; line-height: 1.5; color: var(--muted); }
+    .consent-text strong { color: var(--text); font-size: 0.9rem; display: block; margin-bottom: 4px; }
+    .contact-grid { display: grid; gap: 14px; }
+    .contact-row label { font-size: 0.82rem; font-weight: 500; color: var(--muted); display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+    .actions { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 22px; border-radius: 11px; font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; }
+    .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--muted); width: 100%; }
+    .btn-outline:hover { border-color: var(--accent); color: var(--text); }
+    .btn-primary { width: 100%; background: var(--primary); color: #fff; padding: 15px; font-size: 1rem; border-radius: 13px; }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+    footer { border-top: 1px solid var(--border); background: var(--card); padding: 18px 24px; }
+    .footer-inner { max-width: 680px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">
+    <div class="logo-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+    </div>
+    <span class="logo-name" data-i18n="logo">Health Questionnaire</span>
+  </a>
+  <div class="lang-switcher">
+    <button class="lang-btn" onclick="setLang('uk')">UK</button>
+    <button class="lang-btn" onclick="setLang('ru')">RU</button>
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+  </div>
+</header>
+
+<main>
+  <h1 data-i18n="title">Baby Questionnaire</h1>
+  <p class="subtitle"><span data-i18n="subtitle">Please fill in all required fields marked with</span> <span style="color:var(--error)">*</span></p>
+
+  <div id="successMessage" class="card" style="display: none; text-align: center; padding: 40px 20px;">
+    <h2 data-i18n="success_title" style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 12px;">Thank you!</h2>
+    <p data-i18n="success_desc" style="color: var(--muted);">Your questionnaire has been successfully submitted.</p>
+  </div>
+
+  <form id="healthForm" action="https://api.web3forms.com/submit" method="POST" novalidate>
+    <input type="hidden" name="access_key" value="147772c3-06fc-43aa-983b-4385b2ba3d15">
+    <input type="hidden" name="subject" value="New Baby Health Questionnaire Submission">
+
+    <div class="card">
+      <div class="card-title"><span data-i18n="sec_personal">Personal Information</span></div>
+      <div class="grid-3">
+        <div class="field">
+          <label class="field-label"><span data-i18n="lbl_name">Name</span><span class="req">*</span></label>
+          <input type="text" name="baby_name" required>
+        </div>
+        <div class="field">
+          <label class="field-label"><span data-i18n="lbl_weight">Weight (kg)</span><span class="req">*</span></label>
+          <input type="number" step="0.1" name="baby_weight" required>
+        </div>
+        <div class="field">
+          <label class="field-label"><span data-i18n="lbl_age">Age (months)</span><span class="req">*</span></label>
+          <input type="number" name="baby_age" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span data-i18n="sec_health">Health Aspects</span></div>
+      
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_digestion">Digestion</span><span class="req">*</span></div>
+        <div class="chips" data-name="digestion" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="digestion" value="no_issues"><span data-i18n="val_no_issues">No issues</span></label>
+          <label class="chip"><input type="checkbox" name="digestion" value="stomach_pain"><span data-i18n="val_stomach_pain">Stomach pain</span></label>
+          <label class="chip"><input type="checkbox" name="digestion" value="diarrhea"><span data-i18n="val_diarrhea">Diarrhea</span></label>
+          <label class="chip"><input type="checkbox" name="digestion" value="constipation"><span data-i18n="val_constipation">Constipation</span></label>
+          <label class="chip"><input type="checkbox" name="digestion" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_sweats">Sweats at night</span><span class="req">*</span></div>
+        <div class="chips" data-name="sweats_at_night" data-type="radio">
+          <label class="chip"><input type="radio" name="sweats_at_night" value="yes"><span data-i18n="val_yes">Yes</span></label>
+          <label class="chip"><input type="radio" name="sweats_at_night" value="no"><span data-i18n="val_no">No</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_breath">Is there bad breath</span><span class="req">*</span></div>
+        <div class="chips" data-name="bad_breath" data-type="radio">
+          <label class="chip"><input type="radio" name="bad_breath" value="yes"><span data-i18n="val_yes">Yes</span></label>
+          <label class="chip"><input type="radio" name="bad_breath" value="no"><span data-i18n="val_no">No</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_skin">Moles / warts / rashes / eczema</span><span class="req">*</span></div>
+        <div class="chips" data-name="skin_condition" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="skin_condition" value="no_issues"><span data-i18n="val_no_issues">No issues</span></label>
+          <label class="chip"><input type="checkbox" name="skin_condition" value="many_moles"><span data-i18n="val_many_moles">Many moles</span></label>
+          <label class="chip"><input type="checkbox" name="skin_condition" value="warts"><span data-i18n="val_warts">Warts</span></label>
+          <label class="chip"><input type="checkbox" name="skin_condition" value="rashes"><span data-i18n="val_rashes">Rashes</span></label>
+          <label class="chip"><input type="checkbox" name="skin_condition" value="eczema"><span data-i18n="val_eczema">Eczema</span></label>
+          <label class="chip"><input type="checkbox" name="skin_condition" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_allergies">Allergies</span><span class="req">*</span></div>
+        <div class="chips" data-name="allergies" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="allergies" value="no_issues"><span data-i18n="val_no_issues">No issues</span></label>
+          <label class="chip"><input type="checkbox" name="allergies" value="pollen"><span data-i18n="val_pollen">Pollen</span></label>
+          <label class="chip"><input type="checkbox" name="allergies" value="animals"><span data-i18n="val_animals">Animals</span></label>
+          <label class="chip"><input type="checkbox" name="allergies" value="dust"><span data-i18n="val_dust">Dust</span></label>
+          <label class="chip"><input type="checkbox" name="allergies" value="food"><span data-i18n="val_food">Food</span></label>
+          <label class="chip"><input type="checkbox" name="allergies" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label"><span data-i18n="lbl_water">How much water does the child drink per day (ml)</span></label>
+        <input type="number" name="water_ml">
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_injuries">Injuries / surgeries / head trauma / fractures</span><span class="req">*</span></div>
+        <div class="chips" data-name="injuries" data-type="checkbox">
+          <label class="chip"><input type="checkbox" name="injuries" value="all_well"><span data-i18n="val_all_well">All is well</span></label>
+          <label class="chip"><input type="checkbox" name="injuries" value="injuries"><span data-i18n="val_injuries">Injuries</span></label>
+          <label class="chip"><input type="checkbox" name="injuries" value="surgeries"><span data-i18n="val_surgeries">Surgeries</span></label>
+          <label class="chip"><input type="checkbox" name="injuries" value="head_trauma"><span data-i18n="val_head_trauma">Head trauma</span></label>
+          <label class="chip"><input type="checkbox" name="injuries" value="fractures"><span data-i18n="val_fractures">Fractures</span></label>
+          <label class="chip"><input type="checkbox" name="injuries" value="severe_falls"><span data-i18n="val_severe_falls">Severe falls</span></label>
+          <label class="chip"><input type="checkbox" name="injuries" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_sleep">Does the child sleep well</span><span class="req">*</span></div>
+        <div class="chips" data-name="sleep" data-type="radio">
+          <label class="chip"><input type="radio" name="sleep" value="good"><span data-i18n="val_good">Good</span></label>
+          <label class="chip"><input type="radio" name="sleep" value="bad"><span data-i18n="val_bad">Bad</span></label>
+          <label class="chip"><input type="radio" name="sleep" value="sometimes_problems"><span data-i18n="val_sometimes_problems">Sometimes problems</span></label>
+          <label class="chip"><input type="radio" name="sleep" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_sick">Is often sick / has taken antibiotics</span><span class="req">*</span></div>
+        <div class="chips" data-name="sick_history" data-type="radio">
+          <label class="chip"><input type="radio" name="sick_history" value="no_issues"><span data-i18n="val_no_issues">No issues</span></label>
+          <label class="chip"><input type="radio" name="sick_history" value="sometimes_sick"><span data-i18n="val_sometimes_sick">Sometimes sick</span></label>
+          <label class="chip"><input type="radio" name="sick_history" value="often_sick"><span data-i18n="val_often_sick">Often sick</span></label>
+          <label class="chip"><input type="radio" name="sick_history" value="take_antibiotics"><span data-i18n="val_take_antibiotics">Take antibiotics</span></label>
+          <label class="chip"><input type="radio" name="sick_history" value="both"><span data-i18n="val_both_sick_meds">Both often sick and take antibiotics</span></label>
+          <label class="chip"><input type="radio" name="sick_history" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span data-i18n="sec_pregnancy">Birth and Pregnancy</span></div>
+      
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_birth_type">How was the birth</span><span class="req">*</span></div>
+        <div class="chips" data-name="birth_type" data-type="radio">
+          <label class="chip"><input type="radio" name="birth_type" value="natural"><span data-i18n="val_natural">Natural</span></label>
+          <label class="chip"><input type="radio" name="birth_type" value="c_section"><span data-i18n="val_c_section">C-section</span></label>
+          <label class="chip"><input type="radio" name="birth_type" value="other"><span data-i18n="val_other">Other</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_toxicosis">Did mother have severe toxicosis during pregnancy</span><span class="req">*</span></div>
+        <div class="chips" data-name="mother_toxicosis" data-type="radio">
+          <label class="chip"><input type="radio" name="mother_toxicosis" value="yes"><span data-i18n="val_yes">Yes</span></label>
+          <label class="chip"><input type="radio" name="mother_toxicosis" value="no"><span data-i18n="val_no">No</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_m_allergies">Did mother have allergies before or during pregnancy</span><span class="req">*</span></div>
+        <div class="chips" data-name="mother_allergies" data-type="radio">
+          <label class="chip"><input type="radio" name="mother_allergies" value="yes"><span data-i18n="val_yes">Yes</span></label>
+          <label class="chip"><input type="radio" name="mother_allergies" value="no"><span data-i18n="val_no">No</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_m_constipation">Did mother have constipation</span><span class="req">*</span></div>
+        <div class="chips" data-name="mother_constipation" data-type="radio">
+          <label class="chip"><input type="radio" name="mother_constipation" value="yes"><span data-i18n="val_yes">Yes</span></label>
+          <label class="chip"><input type="radio" name="mother_constipation" value="no"><span data-i18n="val_no">No</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_m_antibiotics">Did mother take antibiotics during pregnancy</span><span class="req">*</span></div>
+        <div class="chips" data-name="mother_antibiotics" data-type="radio">
+          <label class="chip"><input type="radio" name="mother_antibiotics" value="yes"><span data-i18n="val_yes">Yes</span></label>
+          <label class="chip"><input type="radio" name="mother_antibiotics" value="no"><span data-i18n="val_no">No</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_m_anemia">Did mother have anemia</span><span class="req">*</span></div>
+        <div class="chips" data-name="mother_anemia" data-type="radio">
+          <label class="chip"><input type="radio" name="mother_anemia" value="yes"><span data-i18n="val_yes">Yes</span></label>
+          <label class="chip"><input type="radio" name="mother_anemia" value="no"><span data-i18n="val_no">No</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_m_problems">Were there problems during pregnancy</span><span class="req">*</span></div>
+        <div class="chips" data-name="mother_pregnancy_problems" data-type="radio">
+          <label class="chip"><input type="radio" name="mother_pregnancy_problems" value="yes"><span data-i18n="val_yes">Yes</span></label>
+          <label class="chip"><input type="radio" name="mother_pregnancy_problems" value="no"><span data-i18n="val_no">No</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span data-i18n="sec_additional">Additional Information</span></div>
+      <div class="field">
+        <label class="field-label"><span data-i18n="lbl_add_info">What else should we know about the child's health</span></label>
+        <textarea name="additional_info"></textarea>
+      </div>
+      <div class="field">
+        <div class="field-label"><span data-i18n="lbl_how_learned">How did you learn about me?</span><span class="req">*</span></div>
+        <div class="chips" data-name="how_learned" data-type="radio">
+          <label class="chip"><input type="radio" name="how_learned" value="instagram"><span>Instagram</span></label>
+          <label class="chip"><input type="radio" name="how_learned" value="telegram_channel"><span>Telegram channel</span></label>
+          <label class="chip"><input type="radio" name="how_learned" value="recommendation"><span data-i18n="val_recommend">By recommendation</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span data-i18n="sec_contact">Contact Method</span></div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;" data-i18n="lbl_contact_desc">Please provide at least one: Telegram, Instagram, or Phone</p>
+      <div class="contact-grid">
+        <div class="contact-row"><label>Telegram</label><input type="text" name="telegram"></div>
+        <div class="contact-row"><label>Instagram</label><input type="text" name="instagram"></div>
+        <div class="contact-row"><label>Phone <span style="font-weight:300;color:var(--muted)" data-i18n="val_opt">(optional)</span></label><input type="tel" name="phone"></div>
+      </div>
+    </div>
+
+    <div class="consent-box">
+      <label class="consent-label">
+        <input type="checkbox" id="consent" name="consent" required>
+        <div class="custom-check"></div>
+        <div class="consent-text">
+          <strong data-i18n="lbl_consent_title">Consent to data processing</strong>
+          <span data-i18n="lbl_consent_text">I consent to the processing of my personal data.</span>
+        </div>
+      </label>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn btn-outline" onclick="clearForm()"><span data-i18n="btn_clear">Clear form</span></button>
+      <button type="submit" class="btn btn-primary" id="submitBtn" disabled><span data-i18n="btn_submit">Submit questionnaire</span></button>
+    </div>
+  </form>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span data-i18n="ft_rights">© 2026 Health Questionnaire</span>
+  </div>
+</footer>
+
+<script>
+  const translations = {
+    en: {
+      logo: "Health Questionnaire", title: "Baby Questionnaire", subtitle: "Please fill in all required fields marked with",
+      sec_personal: "Personal Information", lbl_name: "Name", lbl_weight: "Weight", lbl_age: "Age (in months)",
+      sec_health: "Health", lbl_digestion: "Digestion", val_no_issues: "No issues", val_stomach_pain: "Stomach pain",
+      val_diarrhea: "Diarrhea", val_constipation: "Constipation", val_other: "Other", lbl_sweats: "Sweats at night",
+      val_yes: "Yes", val_no: "No", lbl_breath: "Is there bad breath", lbl_skin: "Moles / warts / rashes / eczema",
+      val_many_moles: "Many moles", val_warts: "Warts", val_rashes: "Rashes", val_eczema: "Eczema", lbl_allergies: "Allergies",
+      val_pollen: "Pollen", val_animals: "Animals", val_dust: "Dust", val_food: "Food", lbl_water: "How much water does the child drink per day (ml)",
+      lbl_injuries: "Injuries / surgeries / head trauma / fractures", val_all_well: "All is well", val_injuries: "Injuries",
+      val_surgeries: "Surgeries", val_head_trauma: "Head trauma", val_fractures: "Fractures", val_severe_falls: "Severe falls",
+      lbl_sleep: "Does the child sleep well", val_good: "Good", val_bad: "Bad", val_sometimes_problems: "Sometimes problems",
+      lbl_sick: "Is often sick / has taken antibiotics", val_sometimes_sick: "Sometimes sick", val_often_sick: "Often sick",
+      val_take_antibiotics: "Take antibiotics", val_both_sick_meds: "Both often sick and take antibiotics",
+      sec_pregnancy: "Birth and Pregnancy", lbl_birth_type: "How was the birth", val_natural: "Natural", val_c_section: "C-section",
+      lbl_toxicosis: "Did mother have severe toxicosis during pregnancy", lbl_child_health: "What else should we know about the child's health",
+      lbl_m_allergies: "Did mother have allergies before or during pregnancy", lbl_m_constipation: "Did mother have constipation",
+      lbl_m_antibiotics: "Did mother take antibiotics during pregnancy", lbl_m_anemia: "Did mother have anemia",
+      lbl_m_problems: "Were there problems during pregnancy", lbl_add_info: "What else should we know about the child's health",
+      lbl_how_learned: "How did you learn about me?", val_recommend: "By recommendation", sec_contact: "Contact Method",
+      lbl_contact_desc: "Please provide at least one contact method: Telegram, Instagram, or Phone", val_opt: "(optional)",
+      lbl_consent_title: "Consent to data processing", lbl_consent_text: "I consent to the processing of my personal data.",
+      btn_clear: "Clear form", btn_submit: "Submit questionnaire", ft_rights: "© 2026 Health Questionnaire",
+      success_title: "Thank you!", success_desc: "Your questionnaire has been successfully submitted.", alert_clear: "Clear form data?"
+    },
+    uk: {
+      logo: "Анкета здоровʼя", title: "Анкета для малюків", subtitle: "Будь ласка, заповніть усі обов'язкові поля, позначені",
+      sec_personal: "Особиста інформація", lbl_name: "Ім'я", lbl_weight: "Вага", lbl_age: "Вік (у місяцях)",
+      sec_health: "Здоров'я", lbl_digestion: "Травлення", val_no_issues: "Немає проблем", val_stomach_pain: "Біль у животі",
+      val_diarrhea: "Діарея", val_constipation: "Запор", val_other: "Інше", lbl_sweats: "Потіє вночі",
+      val_yes: "Так", val_no: "Ні", lbl_breath: "Чи є неприємний запах з рота", lbl_skin: "Родимки / бородавки / висипання / екзема",
+      val_many_moles: "Багато родимок", val_warts: "Бородавки", val_rashes: "Висипання", val_eczema: "Екзема", lbl_allergies: "Алергії",
+      val_pollen: "На пилок", val_animals: "На тварин", val_dust: "На пил", val_food: "Харчова", lbl_water: "Скільки води дитина п'є за день (мл)",
+      lbl_injuries: "Травми / операції / струс мозку / переломи", val_all_well: "Все добре", val_injuries: "Травми",
+      val_surgeries: "Операції", val_head_trauma: "Травми голови", val_fractures: "Переломи", val_severe_falls: "Сильні падіння",
+      lbl_sleep: "Чи добре дитина спить", val_good: "Добре", val_bad: "Погано", val_sometimes_problems: "Іноді проблеми",
+      lbl_sick: "Чи часто хворіє / чи приймала антибіотики", val_sometimes_sick: "Іноді хворіє", val_often_sick: "Часто хворіє",
+      val_take_antibiotics: "Приймає антибіотики", val_both_sick_meds: "Часто хворіє і приймає антибіотики",
+      sec_pregnancy: "Пологи та вагітність", lbl_birth_type: "Як пройшли пологи", val_natural: "Природні", val_c_section: "Кесарів розтин",
+      lbl_toxicosis: "Чи був у матері сильний токсикоз під час вагітності", lbl_child_health: "Що ще нам варто знати про здоров'я дитини",
+      lbl_m_allergies: "Чи мала мати алергію до або під час вагітності", lbl_m_constipation: "Чи були у матері запори",
+      lbl_m_antibiotics: "Чи приймала мати антибіотики під час вагітності", lbl_m_anemia: "Чи була у матері анемія",
+      lbl_m_problems: "Чи були проблеми під час вагітності", lbl_add_info: "Що ще нам варто знати про здоров'я дитини",
+      lbl_how_learned: "Звідки ви про мене дізналися?", val_recommend: "За рекомендацією", sec_contact: "Спосіб зв'язку",
+      lbl_contact_desc: "Вкажіть хоча б одне: Telegram, Instagram або Телефон", val_opt: "(необов'язково)",
+      lbl_consent_title: "Згода на обробку даних", lbl_consent_text: "Я даю згоду на обробку моїх персональних даних.",
+      btn_clear: "Очистити форму", btn_submit: "Відправити анкету", ft_rights: "© 2026 Опитувальник здоров'я",
+      success_title: "Дякуємо!", success_desc: "Вашу анкету успішно відправлено.", alert_clear: "Очистити форму?"
+    },
+    ru: {
+      logo: "Анкета здоровья", title: "Анкета для малышей", subtitle: "Пожалуйста, заполните все обязательные поля, отмеченные",
+      sec_personal: "Личная информация", lbl_name: "Имя", lbl_weight: "Вес", lbl_age: "Возраст (в месяцах)",
+      sec_health: "Здоровье", lbl_digestion: "Пищеварение", val_no_issues: "Нет проблем", val_stomach_pain: "Боли в животе",
+      val_diarrhea: "Диарея", val_constipation: "Запор", val_other: "Другое", lbl_sweats: "Потеет по ночам",
+      val_yes: "Да", val_no: "Нет", lbl_breath: "Есть ли неприятный запах изо рта", lbl_skin: "Родинки / бородавки / сыпь / экзема",
+      val_many_moles: "Много родинок", val_warts: "Бородавки", val_rashes: "Сыпь", val_eczema: "Экзема", lbl_allergies: "Аллергии",
+      val_pollen: "На пыльцу", val_animals: "На животных", val_dust: "На пыль", val_food: "Пищевая", lbl_water: "Сколько воды ребенок пьет в день (мл)",
+      lbl_injuries: "Травмы / операции / сотрясения / переломы", val_all_well: "Все хорошо", val_injuries: "Травмы",
+      val_surgeries: "Операции", val_head_trauma: "Травмы головы", val_fractures: "Переломы", val_severe_falls: "Сильные падения",
+      lbl_sleep: "Хорошо ли ребенок спит", val_good: "Хорошо", val_bad: "Плохо", val_sometimes_problems: "Иногда проблемы",
+      lbl_sick: "Часто ли болеет / принимал ли антибиотики", val_sometimes_sick: "Иногда болеет", val_often_sick: "Часто болеет",
+      val_take_antibiotics: "Принимает антибиотики", val_both_sick_meds: "Часто болеет и принимает антибиотики",
+      sec_pregnancy: "Роды и беременность", lbl_birth_type: "Как прошли роды", val_natural: "Естественные", val_c_section: "Кесарево сечение",
+      lbl_toxicosis: "Был ли у матери сильный токсикоз при беременности", lbl_child_health: "Что еще нам нужно знать о здоровье ребенка",
+      lbl_m_allergies: "Была ли у матери аллергия до или во время беременности", lbl_m_constipation: "Были ли у матери запоры",
+      lbl_m_antibiotics: "Принимала ли мать антибиотики во время беременности", lbl_m_anemia: "Была ли у матери анемия",
+      lbl_m_problems: "Были ли проблемы во время беременности", lbl_add_info: "Что еще нам нужно знать о здоровье ребенка",
+      lbl_how_learned: "Откуда вы обо мне узнали?", val_recommend: "По рекомендации", sec_contact: "Способ связи",
+      lbl_contact_desc: "Укажите хотя бы одно: Telegram, Instagram или Телефон", val_opt: "(необязательно)",
+      lbl_consent_title: "Согласие на обработку данных", lbl_consent_text: "Я даю согласие на обработку моих персональных данных.",
+      btn_clear: "Очистить форму", btn_submit: "Отправить анкету", ft_rights: "© 2026 Опросник здоровья",
+      success_title: "Спасибо!", success_desc: "Ваша анкета успешно отправлена.", alert_clear: "Очистить форму?"
+    }
+  };
+
+  let currentLang = 'en';
+
+  function setLang(lang) {
+    currentLang = lang;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[lang] && translations[lang][key]) el.innerHTML = translations[lang][key];
+    });
+  }
+
+  document.querySelectorAll('.chips').forEach(group => {
+    const type = group.dataset.type;
+    group.querySelectorAll('.chip').forEach(chip => {
+      const input = chip.querySelector('input');
+      input.addEventListener('change', () => {
+        if (type === 'radio') {
+          group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+          if (input.checked) chip.classList.add('selected');
+        } else {
+          chip.classList.toggle('selected', input.checked);
+        }
+        checkSubmit();
+      });
+    });
+  });
+
+  const consentCheck = document.getElementById('consent');
+  consentCheck.addEventListener('change', checkSubmit);
+
+  function checkSubmit() {
+    document.getElementById('submitBtn').disabled = !consentCheck.checked;
+  }
+
+  function clearForm() {
+    if (!confirm(translations[currentLang].alert_clear)) return;
+    document.getElementById('healthForm').reset();
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+    checkSubmit();
+  }
+
+  document.getElementById('healthForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const form = this;
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Sending...';
+
+    try {
+      const response = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+      if (response.status === 200) {
+        form.style.display = 'none';
+        document.querySelector('.subtitle').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        alert("Something went wrong!");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = translations[currentLang].btn_submit;
+      }
+    } catch (error) {
+      alert("Network error.");
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
