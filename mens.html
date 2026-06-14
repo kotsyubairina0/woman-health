@@ -84,8 +84,14 @@
   <p class="subtitle"><span data-i18n="subtitle">Please fill in all required fields marked with</span> <span style="color:var(--error)">*</span></p>
 
   <div id="successMessage" class="card" style="display: none; text-align: center; padding: 40px 20px;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
     <h2 data-i18n="success_title" style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 12px;">Thank you!</h2>
-    <p data-i18n="success_desc" style="color: var(--muted);">Your questionnaire has been successfully submitted.</p>
+    <p data-i18n="success_desc" style="color: var(--muted); margin-bottom: 24px;">Your questionnaire has been successfully submitted.</p>
+    
+    <div style="background: var(--primary-light); border: 1px solid #e2d0bc; padding: 20px; border-radius: var(--radius);">
+      <p style="font-size: 0.9rem; font-weight: 500; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;" data-i18n="assess_title">Preliminary Assessment</p>
+      <p id="assessmentResult" style="font-size: 1.3rem; font-weight: 600; color: var(--text);"></p>
+    </div>
   </div>
 
   <form id="healthForm" action="https://api.web3forms.com/submit" method="POST" novalidate>
@@ -549,7 +555,11 @@
       sec_additional_title: "Additional Info & Source", lbl_add_info: "What else would you like to add about your health", lbl_how_learned: "How did you learn about me?", val_insta: "Instagram", val_tg: "Telegram channel", val_recommend: "By recommendation",
       sec_contact_title: "Contact Method", lbl_contact_desc: "Please provide at least one: Telegram, Instagram, or Phone", val_opt: "(optional)",
       lbl_consent_title: "Consent to data processing", lbl_consent_text: "I consent to the processing of my personal data.",
-      btn_clear: "Clear form", btn_submit: "Submit questionnaire", alert_clear: "Clear all form data?"
+      btn_clear: "Clear form", btn_submit: "Submit questionnaire", alert_clear: "Clear all form data?",
+      assess_title: "Preliminary Assessment",
+      assess_good: "Health condition is excellent!",
+      assess_warn: "You should pay attention to some health aspects!",
+      assess_crit: "Consult a qualified doctor immediately!"
     },
     uk: {
       logo: "Анкета здоровʼя", title: "Чоловіче здоров'я", subtitle: "Будь ласка, заповніть усі обов'язкові поля, позначені",
@@ -560,7 +570,7 @@
       sec_health: "Показники здоров'я та систем", lbl_covid: "COVID-19 / Вакцинація", val_covid_had_yes: "Хворів на COVID: Так", val_covid_had_no: "Хворів на COVID: Ні", val_covid_vac_yes: "Вакцинований: Так", val_covid_vac_no: "Вакцинований: Ні",
       lbl_hair: "Стан волосся", val_all_good: "Все добре", val_hair_loss: "Сильне випадіння", val_dryness: "Сухість", val_oiliness: "Жирність", val_brittleness: "Ламкість", val_other: "Інше",
       lbl_teeth: "Стан зубів", val_teeth_decay: "Зуби швидко псуються або кришаться", val_bad_breath: "Неприємний запах з рота", val_bleeding_gums: "Кровоточивість ясен", val_tooth_sensitivity: "Чутливість зубів", val_gum_inflammation: "Запалення ясен",
-      lbl_digestion: "Травлення (Відмітьте, що підходить)", val_no_issues: "Немає проблем", val_heartburn: "Печія", val_bitterness: "Гіркота в роті", val_bloating: "Здуття", val_heaviness: "Тяжкість після їжі", val_gas: "Гази", val_diarrhea: "Діарея", val_constipation: "Запор", val_pancreatitis: "Панкреатит",
+      lbl_digestion: "Травлення (Відмітьте, що підходить)", val_no_issues: "Немає проблем", val_heartburn: "Печія", val_bitterness: "Гіркота в роті", val_bloating: "Здуття", val_heaviness: "Тяжкість после їжі", val_gas: "Гази", val_diarrhea: "Діарея", val_constipation: "Запор", val_pancreatitis: "Панкреатит",
       lbl_gallbladder: "Жовчний міхур та нирки", val_gb_sand: "Пісок у жовчному", val_gb_stones: "Камені в жовчному", val_kd_sand: "Пісок у нирках", val_kd_stones: "Камені в нирках", val_gb_removed: "Жовчний міхур видалено",
       lbl_operations: "Операції та травми", val_ops_none: "Не було операцій чи травм", val_had_ops: "Були операції", val_organs_removed: "Видалено органи", val_serious_injuries: "Були серйозні травми",
       lbl_pressure: "Артеріальний тиск", val_pressure_low: "Знижений", val_pressure_high: "Підвищений", val_pressure_normal: "Нормальний",
@@ -579,13 +589,17 @@
       lbl_antibiotics: "Чи використовуєте антибіотики чи жарознижувальні", lbl_sleep: "Сон (Відмітьте, що підходить)", val_sleep_good: "Добрий", val_hard_fall_asleep: "Важко заснути", val_frequent_waking: "Часті пробудження", val_light_sleep: "Поверхневий сон",
       lbl_energy: "Енергія (Відмітьте, що підходить)", val_hard_wake_up: "Важко прокидатися", val_no_energy: "Немає енергії", val_need_coffee: "Потрібна кава", val_feel_rested: "Відчуваю себе відпочилим",
       lbl_memory: "Пам'ять та концентрація", val_memory_decline: "Погіршення пам'яті", val_concentration_diff: "Труднощі з концентрацією", val_forgetfulness: "Забудькуватість",
-      lbl_lifestyle: "Спосіб життя (Відмітьте, що підходить)", val_sedentary: "Сидячий", val_regular_sport: "Регулярний спорт", val_home_gymnastics: "Домашня гімнастика", val_hardening: "Загартовування", val_high_stress: "Високий рівень стресу", val_heavy_work: "Фізично важка робота", val_toxic_contact: "Контакт із токсичними речовинами",
+      lbl_lifestyle: "Спосіб життя (Відмітьте, що підходить)", val_sedentary: "Сидячий", val_regular_sport: "Регулярний спорт", val_home_gymnastics: "Домашня гімнастика", val_hardening: "Загартовування", val_high_stress: "Високий уровень стресу", val_heavy_work: "Фізично важка робота", val_toxic_contact: "Контакт із токсичними речовинами",
       lbl_toxic_det: "Контакт із токсичними речовинами (уточніть)", lbl_meds_det: "Чи приймаєте ліки на регулярній основі (уточніть)", lbl_supplements: "Добавки: Як ви їх приймаєте?", val_regularly: "Приймаю регулярно", val_periodically: "Періодично", val_not_taking: "Не приймаю",
       lbl_tests: "Чи маєте результати аналізов крові за останні 2–3 місяці або УЗД",
       sec_additional_title: "Додатково та джерела", lbl_add_info: "Що ще ви хотіли б додати про своє здоров'я", lbl_how_learned: "Звідки ви про мене дізналися?", val_insta: "Instagram", val_tg: "Telegram канал", val_recommend: "За рекомендацією",
       sec_contact_title: "Спосіб зв'язку", lbl_contact_desc: "Вкажіть хоча б одне: Telegram, Instagram або Телефон", val_opt: "(необов'язково)",
       lbl_consent_title: "Згода на обробку даних", lbl_consent_text: "Я даю згоду на обробку моїх персональних даних.",
-      btn_clear: "Очистити форму", btn_submit: "Відправити анкету", alert_clear: "Очистити всі дані форми?"
+      btn_clear: "Очистити форму", btn_submit: "Відправити анкету", alert_clear: "Очистити всі дані форми?",
+      assess_title: "Попередня оцінка",
+      assess_good: "Стан здоров'я відмінний!",
+      assess_warn: "Варто звернути увагу на деякі аспекти здоров'я!",
+      assess_crit: "Негайно зверніться до кваліфікованого лікаря!"
     },
     ru: {
       logo: "Анкета здоровья", title: "Мужское здоровье", subtitle: "Пожалуйста, заполните все обязательные поля, отмеченные",
@@ -600,16 +614,16 @@
       lbl_gallbladder: "Желчный пузырь и почки", val_gb_sand: "Песок в желчном", val_gb_stones: "Камни в желчном", val_kd_sand: "Песок в почках", val_kd_stones: "Камни в почках", val_gb_removed: "Желчный пузырь удален",
       lbl_operations: "Операции и травмы", val_ops_none: "Не было операций и травм", val_had_ops: "Были операции", val_organs_removed: "Удалены органы", val_serious_injuries: "Были серьезные травмы",
       lbl_pressure: "Артериальное давление", val_pressure_low: "Пониженное", val_pressure_high: "Повышенное", val_pressure_normal: "Нормальное",
-      sec_chronic_title: "Хронические заболевания и диагностика", lbl_chronic: "Хронические и аутоиммунные заболевания", val_diabetes: "Диабет", val_thyroiditis: "Аутоиммунный тиреоидит", val_psoriasis: "Псориаз",
+      sec_chronic_title: "Хронические заболевания и диагностика", lbl_chronic: "Хронические и аутоиммунные заболевания", val_diabetes: "Diabetes", val_thyroiditis: "Аутоиммунный тиреоидит", val_psoriasis: "Псориаз",
       lbl_nervous: "Нервная система", val_headaches: "Головные боли", val_migraines: "Мигрени", val_weather_dep: "Метеозависимость", val_dizziness: "Головокружение", val_tinnitus: "Шум в ушах", val_floaters: "Мушки перед глазами", val_concussion: "Перенес сотрясение или травму головы",
-      lbl_circulation: "Кровообращение", val_numbness: "Онемение пальцев рук/ног", val_cold_limbs: "Холодные руки и ноги даже летом",
+      lbl_circulation: "Кровообращение", val_numbness: "Онемение пальцев рук / ног", val_cold_limbs: "Холодные руки и ноги летом",
       lbl_vessels: "Состояние сосудов", val_spider_veins: "Сосудистые звездочки / сетка", val_varicose: "Выраженный варикоз", val_hemorrhoids: "Геморрой",
       lbl_skin_cond: "Состояние кожи", val_pigment_spots: "Пигментные пятна", val_acne: "Прыщи / высыпания", val_skin_dryness: "Сухость / шелушение", val_eczema: "Экзема / дерматит",
       lbl_joints: "Суставы и позвоночник", val_crunch: "Хруст / скрип суставов", val_joints_inflam: "Воспаление суставов", val_arthrosis: "Артроз", val_back_pain: "Боль в спине / пояснице", val_neck_pain: "Боль в шее", val_knee_pain: "Боль в коленях",
       lbl_formations: "Новообразования", val_cysts: "Кисты", val_polyps: "Полипы", val_fibroids: "Фибромиомы", val_tumors: "Опухоли", val_hernias: "Грыжи",
-      lbl_infections: "Инфекции и выделения", val_herpes: "Герпес", val_papillomas: "Папилломы", val_warts: "Бородавки", val_moles: "Родинки", val_red_spots: "Красные пятна на коже", val_discharge_male: "Выделения (мужские)", val_cystitis: "Цистит",
+      lbl_infections: "Инфекции и выделения", val_herpes: "Герпес", val_papillomas: "Папилломы", val_warts: "Бородки", val_moles: "Родинки", val_red_spots: "Красные пятна на коже", val_discharge_male: "Выделения (мужские)", val_cystitis: "Цистит",
       lbl_prostatitis: "Есть ли простатит или проблемы с мочеиспусканием",
-      lbl_skin_diseases: "Кожа (Отметьте, что подходит)", val_skin_acne: "Угри", val_skin_severe_acne: "Тяжёлые угри", val_furuncles: "Фурункулы", val_irritation: "Раздражение", val_rosacea: "Розацеа", val_dermatitis: "Дерматит", val_skin_eczema: "Экзема", val_skin_psoriasis: "Пsoriaz",
+      lbl_skin_diseases: "Кожа (Отметьте, что подходит)", val_skin_acne: "Угри", val_skin_severe_acne: "Тяжёлые угри", val_furuncles: "Фурункулы", val_irritation: "Раздражение", val_rosacea: "Розацеа", val_dermatitis: "Дерматит", val_skin_eczema: "Экзема", val_skin_psoriasis: "Псориаз",
       lbl_allergies: "Аллергии", val_pollen: "На пыльцу", val_food: "Пищевая", val_animal_hair: "На шерсть", val_dust: "На пыль", val_medications: "На медикаменты",
       sec_lifestyle_title: "Образ жизни, привычки и самочувствие", lbl_colds_freq: "Как часто вы болеете в год", val_rarely: "Редко (0–1 раз)", val_sometimes: "Иногда (2–3 раза)", val_often: "Часто (4+ раз)",
       lbl_antibiotics: "Используете ли антибиотики или жаропонижающие", lbl_sleep: "Сон (Отметьте, что подходит)", val_sleep_good: "Хороший", val_hard_fall_asleep: "Трудно заснуть", val_frequent_waking: "Частые пробуждения", val_light_sleep: "Поверхностный сон",
@@ -621,7 +635,11 @@
       sec_additional_title: "Дополнительно и источники", lbl_add_info: "Что еще вы хотели бы добавить о своем здоровье", lbl_how_learned: "Откуда вы обо мне узнали?", val_insta: "Instagram", val_tg: "Telegram канал", val_recommend: "По рекомендации",
       sec_contact_title: "Способ связи", lbl_contact_desc: "Укажите хотя бы одно: Telegram, Instagram или Телефон", val_opt: "(необязательно)",
       lbl_consent_title: "Согласие на обработку данных", lbl_consent_text: "Я даю согласие на обработку моих персональных данных.",
-      btn_clear: "Очистить форму", btn_submit: "Отправить анкету", alert_clear: "Очистить все данные формы?"
+      btn_clear: "Очистить форму", btn_submit: "Отправить анкету", alert_clear: "Очистить все данные формы?",
+      assess_title: "Предварительная оценка",
+      assess_good: "Состояние здоровья отличное!",
+      assess_warn: "Следует обратить внимание на некоторые аспекты здоровья!",
+      assess_crit: "Немедленно обратитесь к квалифицированному врачу!"
     }
   };
 
@@ -631,7 +649,6 @@
     currentLang = lang;
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
     document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
-    
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       if (translations[lang] && translations[lang][key]) el.innerHTML = translations[lang][key];
@@ -662,7 +679,7 @@
   }
 
   function clearForm() {
-    if (!confirm(translations[currentLang].alert_clear || "Clear?")) return;
+    if (!confirm(translations[currentLang].alert_clear)) return;
     document.getElementById('healthForm').reset();
     document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
     checkSubmit();
@@ -671,16 +688,48 @@
   document.getElementById('healthForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const form = this;
+    const formData = new FormData(form);
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = true;
     submitBtn.innerHTML = 'Sending...';
 
+    // SCORING LOGIC FOR MEN
+    let score = 0;
+    const criticalIssues = ['tumors', 'cysts', 'polyps', 'diabetes', 'pancreatitis', 'arthrosis', 'gb_stones', 'kd_stones', 'yes', 'severe_acne', 'prostatitis', 'high', 'low'];
+    const normalValues = ['all_good', 'no_issues', 'none', 'normal', 'no', 'good', 'feel_rested', 'rarely', 'instagram', 'telegram_channel', 'recommendation'];
+
+    for (let [key, value] of formData.entries()) {
+      if (key === 'weight_satisfaction' && value === 'no') score += 2;
+      if (key === 'pressure' && (value === 'high' || value === 'low')) score += 2;
+      if (key === 'prostatitis' && value === 'yes') score += 3;
+
+      if (!['access_key', 'subject', 'first_name', 'last_name', 'age', 'height', 'weight', 'water_intake', 'toxic_substances_details', 'medications_details', 'additional_info', 'telegram', 'instagram', 'phone', 'consent', 'how_learned'].includes(key)) {
+        if (!normalValues.includes(value) && value !== '') {
+          if (criticalIssues.includes(value)) {
+            score += 3;
+          } else {
+            score += 1;
+          }
+        }
+      }
+    }
+
+    let assessmentMsg = "";
+    if (score <= 3) {
+      assessmentMsg = translations[currentLang].assess_good;
+    } else if (score <= 7) {
+      assessmentMsg = translations[currentLang].assess_warn;
+    } else {
+      assessmentMsg = translations[currentLang].assess_crit;
+    }
+
     try {
-      const response = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+      const response = await fetch(form.action, { method: 'POST', body: formData });
       if (response.status === 200) {
         form.style.display = 'none';
         document.querySelector('.subtitle').style.display = 'none';
         document.getElementById('successMessage').style.display = 'block';
+        document.getElementById('assessmentResult').innerText = assessmentMsg;
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         alert("Something went wrong!");

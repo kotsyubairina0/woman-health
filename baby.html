@@ -85,8 +85,14 @@
   <p class="subtitle"><span data-i18n="subtitle">Please fill in all required fields marked with</span> <span style="color:var(--error)">*</span></p>
 
   <div id="successMessage" class="card" style="display: none; text-align: center; padding: 40px 20px;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
     <h2 data-i18n="success_title" style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 12px;">Thank you!</h2>
-    <p data-i18n="success_desc" style="color: var(--muted);">Your questionnaire has been successfully submitted.</p>
+    <p data-i18n="success_desc" style="color: var(--muted); margin-bottom: 24px;">Your questionnaire has been successfully submitted.</p>
+    
+    <div style="background: var(--primary-light); border: 1px solid #e2d0bc; padding: 20px; border-radius: var(--radius);">
+      <p style="font-size: 0.9rem; font-weight: 500; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;" data-i18n="assess_title">Preliminary Assessment</p>
+      <p id="assessmentResult" style="font-size: 1.3rem; font-weight: 600; color: var(--text);"></p>
+    </div>
   </div>
 
   <form id="healthForm" action="https://api.web3forms.com/submit" method="POST" novalidate>
@@ -341,7 +347,11 @@
       lbl_contact_desc: "Please provide at least one contact method: Telegram, Instagram, or Phone", val_opt: "(optional)",
       lbl_consent_title: "Consent to data processing", lbl_consent_text: "I consent to the processing of my personal data.",
       btn_clear: "Clear form", btn_submit: "Submit questionnaire", ft_rights: "© 2026 Health Questionnaire",
-      success_title: "Thank you!", success_desc: "Your questionnaire has been successfully submitted.", alert_clear: "Clear form data?"
+      success_title: "Thank you!", success_desc: "Your questionnaire has been successfully submitted.", alert_clear: "Clear form data?",
+      assess_title: "Preliminary Assessment",
+      assess_good: "Development parameters and indices are excellent!",
+      assess_warn: "Pay attention to digestive or ambient physiological markers.",
+      assess_crit: "Recommendation to schedule a detailed pediatric status evaluation."
     },
     uk: {
       logo: "Анкета здоровʼя", title: "Анкета для малюків", subtitle: "Будь ласка, заповніть усі обов'язкові поля, позначені",
@@ -363,14 +373,18 @@
       lbl_m_problems: "Чи були проблеми під час вагітності", lbl_add_info: "Що ще нам варто знати про здоров'я дитини",
       lbl_how_learned: "Звідки ви про мене дізналися?", val_recommend: "За рекомендацією", sec_contact: "Спосіб зв'язку",
       lbl_contact_desc: "Вкажіть хоча б одне: Telegram, Instagram або Телефон", val_opt: "(необов'язково)",
-      lbl_consent_title: "Згода на обробку даних", lbl_consent_text: "Я даю згоду на обробку моїх персональних даних.",
+      lbl_consent_title: "Згода на обробку даних", lbl_consent_text: "Я даю згоду на обробку моих персональних даних.",
       btn_clear: "Очистити форму", btn_submit: "Відправити анкету", ft_rights: "© 2026 Опитувальник здоров'я",
-      success_title: "Дякуємо!", success_desc: "Вашу анкету успішно відправлено.", alert_clear: "Очистити форму?"
+      success_title: "Дякуємо!", success_desc: "Вашу анкету успішно відправлено.", alert_clear: "Очистити форму?",
+      assess_title: "Попередня оцінка",
+      assess_good: "Показники розвитку та загальний стан малюка відмінні!",
+      assess_warn: "Є певні нюанси з травленням або анамнезом вагітності. Варто звернути увагу.",
+      assess_crit: "Рекомендовано розгорнуту консультацію спеціаліста для корекції факторів розвитку."
     },
     ru: {
       logo: "Анкета здоровья", title: "Анкета для малышей", subtitle: "Пожалуйста, заполните все обязательные поля, отмеченные",
       sec_personal: "Личная информация", lbl_name: "Имя", lbl_weight: "Вес", lbl_age: "Возраст (в месяцах)",
-      sec_health: "Здоровье", lbl_digestion: "Пищеварение", val_no_issues: "Нет проблем", val_stomach_pain: "Боли в животе",
+      sec_health: "Здоровье", lbl_digestion: "Пищеварение", val_no_issues: "Нет проблем", val_stomach_pain: "Боли в живое",
       val_diarrhea: "Диарея", val_constipation: "Запор", val_other: "Другое", lbl_sweats: "Потеет по ночам",
       val_yes: "Да", val_no: "Нет", lbl_breath: "Есть ли неприятный запах изо рта", lbl_skin: "Родинки / бородавки / сыпь / экзема",
       val_many_moles: "Много родинок", val_warts: "Бородавки", val_rashes: "Сыпь", val_eczema: "Экзема", lbl_allergies: "Аллергии",
@@ -389,7 +403,11 @@
       lbl_contact_desc: "Укажите хотя бы одно: Telegram, Instagram или Телефон", val_opt: "(необязательно)",
       lbl_consent_title: "Согласие на обработку данных", lbl_consent_text: "Я даю согласие на обработку моих персональных данных.",
       btn_clear: "Очистить форму", btn_submit: "Отправить анкету", ft_rights: "© 2026 Опросник здоровья",
-      success_title: "Спасибо!", success_desc: "Ваша анкета успешно отправлена.", alert_clear: "Очистить форму?"
+      success_title: "Спасибо!", success_desc: "Ваша анкета успешно отправлена.", alert_clear: "Очистить форму?",
+      assess_title: "Предварительная оценка",
+      assess_good: "Показатели развития и общее состояние малыша отличные!",
+      assess_warn: "Присутствуют маркеры дисбаланса пищеварения или сна. Требуется наблюдение.",
+      assess_crit: "Рекомендуется развернутая консультация специалиста для оптимизации здоровья."
     }
   };
 
@@ -438,16 +456,49 @@
   document.getElementById('healthForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const form = this;
+    const formData = new FormData(form);
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = true;
     submitBtn.innerHTML = 'Sending...';
 
+    // SCORING LOGIC FOR BABY
+    let score = 0;
+    const neutralValues = ['no_issues', 'all_well', 'good', 'natural', 'no', 'instagram', 'telegram_channel', 'recommendation'];
+    
+    for (let [key, value] of formData.entries()) {
+      if (['sweats_at_night', 'bad_breath', 'mother_toxicosis', 'mother_allergies', 'mother_constipation', 'mother_antibiotics', 'mother_anemia', 'mother_pregnancy_problems'].includes(key) && value === 'yes') {
+        score += 1.5;
+      }
+      if (key === 'sick_history') {
+        if (value === 'often_sick' || value === 'take_antibiotics') score += 2;
+        if (value === 'both') score += 3;
+      }
+      if (key === 'sleep' && value === 'bad') score += 2;
+      if (key === 'sleep' && value === 'sometimes_problems') score += 1;
+      
+      if (!['access_key', 'subject', 'baby_name', 'baby_weight', 'baby_age', 'water_ml', 'additional_info', 'telegram', 'instagram', 'phone', 'consent', 'sweats_at_night', 'bad_breath', 'mother_toxicosis', 'mother_allergies', 'mother_constipation', 'mother_antibiotics', 'mother_anemia', 'mother_pregnancy_problems', 'sick_history', 'sleep', 'birth_type'].includes(key)) {
+        if (!neutralValues.includes(value) && value !== '') {
+          score += 1;
+        }
+      }
+    }
+
+    let assessmentMsg = "";
+    if (score <= 2) {
+      assessmentMsg = translations[currentLang].assess_good;
+    } else if (score <= 5) {
+      assessmentMsg = translations[currentLang].assess_warn;
+    } else {
+      assessmentMsg = translations[currentLang].assess_crit;
+    }
+
     try {
-      const response = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+      const response = await fetch(form.action, { method: 'POST', body: formData });
       if (response.status === 200) {
         form.style.display = 'none';
         document.querySelector('.subtitle').style.display = 'none';
         document.getElementById('successMessage').style.display = 'block';
+        document.getElementById('assessmentResult').innerText = assessmentMsg;
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         alert("Something went wrong!");

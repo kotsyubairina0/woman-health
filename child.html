@@ -83,8 +83,14 @@
   <p class="subtitle"><span data-i18n="subtitle">Please fill in all required fields marked with</span> <span style="color:var(--error)">*</span></p>
 
   <div id="successMessage" class="card" style="display: none; text-align: center; padding: 40px 20px;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
     <h2 data-i18n="success_title" style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 12px;">Thank you!</h2>
-    <p data-i18n="success_desc" style="color: var(--muted);">Your questionnaire has been successfully submitted.</p>
+    <p data-i18n="success_desc" style="color: var(--muted); margin-bottom: 24px;">Your questionnaire has been successfully submitted.</p>
+    
+    <div style="background: var(--primary-light); border: 1px solid #e2d0bc; padding: 20px; border-radius: var(--radius);">
+      <p style="font-size: 0.9rem; font-weight: 500; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;" data-i18n="assess_title">Preliminary Assessment</p>
+      <p id="assessmentResult" style="font-size: 1.3rem; font-weight: 600; color: var(--text);"></p>
+    </div>
   </div>
 
   <form id="healthForm" action="https://api.web3forms.com/submit" method="POST" novalidate>
@@ -313,7 +319,11 @@
       sec_contact: "Contact Method", lbl_contact_desc: "Please provide at least one contact method: Telegram, Instagram, or Phone",
       val_opt: "(optional)", lbl_consent_title: "Consent to data processing", lbl_consent_text: "I consent to the processing of my personal data.",
       btn_clear: "Clear form", btn_submit: "Submit questionnaire", ft_rights: "© 2026 Health Questionnaire",
-      success_title: "Thank you!", success_desc: "Your questionnaire has been successfully submitted.", alert_clear: "Clear form data?"
+      success_title: "Thank you!", success_desc: "Your questionnaire has been successfully submitted.", alert_clear: "Clear form data?",
+      assess_title: "Preliminary Assessment",
+      assess_good: "General dynamic parameters are within excellent ranges!",
+      assess_warn: "Mild dynamic or physiological adjustments are recommended.",
+      assess_crit: "Consider organizing a systematic review of the lifestyle and physiological factors."
     },
     uk: {
       logo: "Анкета здоровʼя", title: "Анкета для дітей", subtitle: "Будь ласка, заповніть усі обов'язкові поля, позначені",
@@ -327,7 +337,7 @@
       val_hyperactive: "Гіперактивність", val_often_tired: "Часто втомлюється", val_normal: "Норма", lbl_water: "Вода на день",
       lbl_injuries: "Травми / операції / струс мозку / переломи", val_all_well: "Все добре", val_injuries: "Травми",
       val_surgeries: "Операції", val_head_trauma: "Травми голови", val_fractures: "Переломи", val_severe_falls: "Сильні падіння",
-      lbl_headache: "Скарги на головний біль, поганий сонь", val_headaches: "Головні болі", val_poor_sleep: "Поганий сон",
+      lbl_headache: "Скарги на головний біль, поганий сон", val_headaches: "Головні болі", val_poor_sleep: "Поганий сон",
       val_both_headache_sleep: "Головні болі та поганий сон", lbl_sick: "Часто хворіє, приймає антибіотики",
       val_sometimes_sick: "Іноді хворіє", val_often_sick: "Часто хворіє", val_take_antibiotics: "Приймає антибіотики",
       val_both_sick_meds: "Часто хворіє і приймає антибіотики", sec_additional: "Додаткова інформація",
@@ -335,7 +345,11 @@
       sec_contact: "Спосіб зв'язку", lbl_contact_desc: "Вкажіть хоча б одне: Telegram, Instagram або Телефон",
       val_opt: "(необов'язково)", lbl_consent_title: "Згода на обробку даних", lbl_consent_text: "Я даю згоду на обробку моїх персональних даних.",
       btn_clear: "Очистити форму", btn_submit: "Відправити анкету", ft_rights: "© 2026 Опитувальник здоров'я",
-      success_title: "Дякуємо!", success_desc: "Вашу анкету успішно відправлено.", alert_clear: "Очистити форму?"
+      success_title: "Дякуємо!", success_desc: "Вашу анкету успішно відправлено.", alert_clear: "Очистити форму?",
+      assess_title: "Попередня оцінка",
+      assess_good: "Показники дитини стабільні, фізіологічний стан чудовий!",
+      assess_warn: "Варто приділити увагу збалансованості харчування, стану зубів або активності.",
+      assess_crit: "Рекомендована консультація фахівця для оптимізації маркерів росту та імунітету."
     },
     ru: {
       logo: "Анкета здоровья", title: "Анкета для детей", subtitle: "Пожалуйста, заполните все обязательные поля, отмеченные",
@@ -351,13 +365,17 @@
       val_surgeries: "Операции", val_head_trauma: "Травмы головы", val_fractures: "Переломы", val_severe_falls: "Сильные падения",
       lbl_headache: "Жалобы на головную боль, плохой сон", val_headaches: "Головные боли", val_poor_sleep: "Плохой сон",
       val_both_headache_sleep: "Головные боли и плохой сон", lbl_sick: "Часто болеет, принимает антибиотики",
-      val_sometimes_sick: "Иногда болеет", val_often_sick: "Часто болеет", val_take_antibiotics: "Принимает антибиотики",
+      val_sometimes_sick: "Иногда болеет", val_often_sick: "Часто болеет", val_take_antibiotics: "Принимает anticбиотики",
       val_both_sick_meds: "Часто болеет и принимает антибиотики", sec_additional: "Дополнительная информация",
       lbl_add_info: "Что еще нам нужно знать", lbl_how_learned: "Откуда вы обо мне узнали?", val_recommend: "По рекомендации",
       sec_contact: "Способ связи", lbl_contact_desc: "Укажите хотя бы одно: Telegram, Instagram или Телефон",
       val_opt: "(необязательно)", lbl_consent_title: "Согласие на обработку данных", lbl_consent_text: "Я даю согласие на обработку моих персональных данных.",
       btn_clear: "Очистить форму", btn_submit: "Отправить анкету", ft_rights: "© 2026 Опросник здоровья",
-      success_title: "Спасибо!", success_desc: "Ваша анкета успешно отправлена.", alert_clear: "Очистить форму?"
+      success_title: "Спасибо!", success_desc: "Ваша анкета успешно отправлена.", alert_clear: "Очистить форму?",
+      assess_title: "Предварительная оценка",
+      assess_good: "Показатели развития ребенка стабильны, физиологический тонус отличный!",
+      assess_warn: "Рекомендуется скорректировать маркеры пищеварения, сна или гиперактивности.",
+      assess_crit: "Рекомендуется системный разбор показателей здоровья ребенка со специалистом."
     }
   };
 
@@ -406,16 +424,48 @@
   document.getElementById('healthForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const form = this;
+    const formData = new FormData(form);
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = true;
     submitBtn.innerHTML = 'Sending...';
 
+    // SCORING LOGIC FOR CHILD
+    let score = 0;
+    const neutralValues = ['no_issues', 'all_well', 'normal', 'no', 'instagram', 'telegram_channel', 'recommendation'];
+
+    for (let [key, value] of formData.entries()) {
+      if (['teeth_decay', 'bad_breath'].includes(key) && value === 'yes') score += 1.5;
+      if (key === 'hyperactive_tired' && (value === 'hyperactive' || value === 'often_tired')) score += 1.5;
+      if (key === 'headache_sleep' && value === 'both') score += 2;
+      if (key === 'headache_sleep' && (value === 'headaches' || value === 'poor_sleep')) score += 1;
+      if (key === 'sick_history') {
+        if (value === 'often_sick' || value === 'take_antibiotics') score += 2;
+        if (value === 'both') score += 3;
+      }
+
+      if (!['access_key', 'subject', 'child_name', 'child_age', 'child_weight', 'sugar_dependency', 'water_intake', 'additional_info', 'telegram', 'instagram', 'phone', 'consent', 'teeth_decay', 'bad_breath', 'hyperactive_tired', 'headache_sleep', 'sick_history'].includes(key)) {
+        if (!neutralValues.includes(value) && value !== '') {
+          score += 1;
+        }
+      }
+    }
+
+    let assessmentMsg = "";
+    if (score <= 2) {
+      assessmentMsg = translations[currentLang].assess_good;
+    } else if (score <= 5) {
+      assessmentMsg = translations[currentLang].assess_warn;
+    } else {
+      assessmentMsg = translations[currentLang].assess_crit;
+    }
+
     try {
-      const response = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+      const response = await fetch(form.action, { method: 'POST', body: formData });
       if (response.status === 200) {
         form.style.display = 'none';
         document.querySelector('.subtitle').style.display = 'none';
         document.getElementById('successMessage').style.display = 'block';
+        document.getElementById('assessmentResult').innerText = assessmentMsg;
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         alert("Something went wrong!");
